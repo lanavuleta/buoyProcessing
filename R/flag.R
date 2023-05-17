@@ -25,7 +25,11 @@ flag <- function(data, sensor_chars, sensor_maint) {
   operating_range_mins <- sensor_chars$operating_range_min
   operating_range_maxs <- sensor_chars$operating_range_max
 
-  data_pois <- pmap(data_pois, operating_range_mins, operating_range_maxs,
+  roc_thresholds <- sensor_chars$roc_threshold
+
+  data_pois <- pmap(data_pois,
+                    operating_range_mins, operating_range_maxs,
+                    roc_thresholds,
                     flag_poi,
                     sensor_chars, sensor_maint,
                     time_small = flag_intervals[[which(names(flag_intervals) == "time_small")]],
@@ -39,6 +43,7 @@ flag <- function(data, sensor_chars, sensor_maint) {
 #'  and created flag columns as their respective do_flag functions are run
 #' @param operating_range_min numeric. Operating range minimum
 #' @param operating_range_max numeric. Operating range maximum
+#' @param roc_threshold numeric. Maximum allowed rate of change
 #' @inheritParams flag
 #' @param time_small numeric. Number of rows that counts as a small block of data
 #' @param time_large numeric. Number of rows that counts as a large block of data
@@ -50,6 +55,7 @@ flag <- function(data, sensor_chars, sensor_maint) {
 #' @export
 flag_poi <- function(data_poi,
                      operating_range_min, operating_range_max,
+                     roc_threshold,
                      sensor_chars, sensor_maint, time_small, time_large) {
 
   parameter <- colnames(data_poi)[2]
@@ -60,7 +66,9 @@ flag_poi <- function(data_poi,
     mutate_at(2, as.numeric) %>%
 
     do_flag_1(time_small, time_large) %>%
-    do_flag_2(operating_range_min, operating_range_max)
+    do_flag_2(operating_range_min, operating_range_max) %>%
+    do_flag_3() %>%
+    do_flag_4(roc_threshold)
 
   #colnames(data_poi)[3] <- paste(colnames(data_poi)[2], "Flag", sep = "_")
 
@@ -151,6 +159,27 @@ do_flag_3 <- function(data_poi) {
                                 .[[2]] >= local_range_min
                               ~ "B3",
                               TRUE ~ ""))
+
+}
+
+#' Title
+#'
+#' @inheritParams flag_poi
+#'
+#' @importFrom dplyr mutate select case_when lag lead
+#' @importFrom magrittr "%>%"
+#'
+#' @return dataframe
+#' @export
+do_flag_4 <- function(data_poi, roc_threshold) {
+
+  data_poi <- data_poi %>%
+    mutate(diff = abs(.[[2]] - lag(.[[2]])),
+           flag_4 = case_when((    diff   >= roc_threshold |
+                               lag(diff)  >= roc_threshold |
+                               lead(diff) >= roc_threshold) ~ "B4",
+                              TRUE ~ "")) %>%
+    select(-diff)
 
 }
 

@@ -8,6 +8,7 @@ flag_poi(
   data_poi,
   operating_range_min,
   operating_range_max,
+  roc_threshold,
   sensor_chars,
   sensor_maint,
   time_small,
@@ -21,6 +22,8 @@ and created flag columns as their respective do_flag functions are run}
 \item{operating_range_min}{numeric. Operating range minimum}
 
 \item{operating_range_max}{numeric. Operating range maximum}
+
+\item{roc_threshold}{numeric. Maximum allowed rate of change}
 
 \item{sensor_chars}{dataframe. Output from read_sensor_chars()}
 
