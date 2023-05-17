@@ -4,7 +4,7 @@
 #' @inheritParams check_params_units
 #' @param sensor_maint Output from read_sensor_maint()
 #'
-#' @importFrom purrr map pmap
+#' @importFrom purrr map pmap_dfc
 #' @importFrom magrittr "%>%"
 #' @importFrom dplyr select all_of
 #'
@@ -27,13 +27,34 @@ flag <- function(data, sensor_chars, sensor_maint) {
 
   roc_thresholds <- sensor_chars$roc_threshold
 
-  data_pois <- pmap(data_pois,
-                    operating_range_mins, operating_range_maxs,
-                    roc_thresholds,
-                    flag_poi,
-                    sensor_chars, sensor_maint,
-                    time_small = flag_intervals[[which(names(flag_intervals) == "time_small")]],
-                    time_large = flag_intervals[[which(names(flag_intervals) == "time_large")]])
+  data_pois <- pmap_dfc(data_pois,
+                        operating_range_mins, operating_range_maxs,
+                        roc_thresholds,
+                        flag_poi,
+                        sensor_chars, sensor_maint,
+                        time_small = flag_intervals[[which(names(flag_intervals) == "time_small")]],
+                        time_large = flag_intervals[[which(names(flag_intervals) == "time_large")]])
+
+}
+
+#' Title
+#'
+#' @inheritParams flag
+#'
+#' @importFrom sqldf sqldf
+#' @importFrom dplyr select rename
+#' @importFrom magrittr "%>%"
+#'
+#' @return dataframe
+#' @export
+do_flag_x <- function(data, sensor_maint) {
+
+  data <- sqldf("SELECT * FROM data
+                LEFT JOIN sensor_maint
+                ON data.datetime >= sensor_maint.start_datetime AND
+                  data.datetime <= sensor_maint.end_datetime") %>%
+    select(-c(start_datetime, end_datetime)) %>%
+    rename(flag_x = flag)
 
 }
 
@@ -68,9 +89,11 @@ flag_poi <- function(data_poi,
     do_flag_1(time_small, time_large) %>%
     do_flag_2(operating_range_min, operating_range_max) %>%
     do_flag_3() %>%
-    do_flag_4(roc_threshold)
+    do_flag_4(roc_threshold) %>%
+    do_flag_m_to_4() %>%
+    select(1:2, flag)
 
-  #colnames(data_poi)[3] <- paste(colnames(data_poi)[2], "Flag", sep = "_")
+  colnames(data_poi)[3] <- paste(colnames(data_poi)[2], "Flag", sep = "_")
 
 }
 
@@ -183,24 +206,23 @@ do_flag_4 <- function(data_poi, roc_threshold) {
 
 }
 
-#' Title
+#' Calculate flag for parameter of interest (not including X flags)
 #'
-#' @inheritParams flag
+#' @inheritParams flag_poi
 #'
-#' @importFrom sqldf sqldf
-#' @importFrom dplyr select rename
+#' @importFrom dplyr mutate case_when
 #' @importFrom magrittr "%>%"
 #'
 #' @return dataframe
 #' @export
-do_flag_x <- function(data, sensor_maint) {
+do_flag_m_to_4 <- function(data_poi) {
 
-  data <- sqldf("SELECT * FROM data
-                LEFT JOIN sensor_maint
-                ON data.datetime >= sensor_maint.start_datetime AND
-                  data.datetime <= sensor_maint.end_datetime") %>%
-    select(-c(start_datetime, end_datetime)) %>%
-    rename(flag_x = flag)
+  data_poi <- data_poi %>%
+    mutate(flag = case_when(flag_1 == "B1" ~ flag_1,
+                            flag_m == "M"  ~ flag_m,
+                            flag_2 == "B2" ~ flag_2,
+                            flag_3 == "B3" ~ flag_3,
+                            flag_4 == "B4" ~ flag_4))
 
 }
 
