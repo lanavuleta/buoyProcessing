@@ -131,6 +131,31 @@ do_flag_2 <- function(data_poi, operating_range_min, operating_range_max) {
 
 #' Title
 #'
+#' @inheritParams flag_poi
+#'
+#' @importFrom dplyr filter
+#' @importFrom magrittr "%>%"
+#'
+#' @return dataframe
+#' @export
+do_flag_3 <- function(data_poi) {
+
+  ci <- calculate_99_ci(filter(data_poi,
+                               flag_m != "M" & flag_1 != "B1" & flag_2 != "B2")[,2])
+
+  local_range_min <- ci[[which(names(ci) == "bound_lower")]]
+  local_range_min <- ci[[which(names(ci) == "bound_upper")]]
+
+  data_poi <- data_poi %>%
+    mutate(flag_3 = case_when(.[[2]] <= local_range_min |
+                                .[[2]] >= local_range_min
+                              ~ "B3",
+                              TRUE ~ ""))
+
+}
+
+#' Title
+#'
 #' @inheritParams flag
 #'
 #' @importFrom sqldf sqldf

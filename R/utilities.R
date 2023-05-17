@@ -22,3 +22,25 @@ get_flag_intervals <- function(data) {
   flag_intervals <- c(time_small = time_small, time_large = time_large)
 
 }
+
+#' Title
+#'
+#' @param values numeric vector. Values used to calculate the 99 CI
+#'
+#' @importFrom stats sd qnorm
+#'
+#' @return numeric vector
+#' @export
+calculate_99_ci <- function(values) {
+
+  values_mean <- mean(values)
+  n <- length(values)
+  standard_deviation <- sd(values)
+
+  error <- qnorm(0.995) * standard_deviation/sqrt(n)
+
+  return(c(bound_lower = values_mean - error,
+           bound_upper = values_mean + error))
+
+}
+
