@@ -17,7 +17,7 @@ flag <- function(data, sensor_chars, sensor_maint) {
   data <- data %>%
     do_flag_x(sensor_maint)
 
-  cols <- seq(2,ncol(data))
+  cols <- seq(2,ncol(data)-1)
 
   # pois = ParameterS Of Interest
   data_pois <- cols %>% map(function(x) select(data, all_of(c(1, x))))
@@ -27,13 +27,19 @@ flag <- function(data, sensor_chars, sensor_maint) {
 
   roc_thresholds <- sensor_chars$roc_threshold
 
-  data_pois <- pmap_dfc(data_pois,
-                        operating_range_mins, operating_range_maxs,
-                        roc_thresholds,
+  data_pois <- pmap_dfc(list(data_pois,
+                             operating_range_mins, operating_range_maxs,
+                             roc_thresholds),
                         flag_poi,
                         sensor_chars, sensor_maint,
                         time_small = flag_intervals[[which(names(flag_intervals) == "time_small")]],
                         time_large = flag_intervals[[which(names(flag_intervals) == "time_large")]])
+
+  data <- data %>%
+    select(datetime, flag_x) %>%
+    cbind(data_pois) %>%
+    do_flag_final() %>%
+    select(-flag_x)
 
 }
 
@@ -91,9 +97,11 @@ flag_poi <- function(data_poi,
     do_flag_3() %>%
     do_flag_4(roc_threshold) %>%
     do_flag_m_to_4() %>%
-    select(1:2, flag)
+    select(2, flag)
 
-  colnames(data_poi)[3] <- paste(colnames(data_poi)[2], "Flag", sep = "_")
+  colnames(data_poi)[2] <- paste(colnames(data_poi)[1], "Flag", sep = "_")
+
+  return(data_poi)
 
 }
 
@@ -226,3 +234,20 @@ do_flag_m_to_4 <- function(data_poi) {
 
 }
 
+#' Title
+#'
+#' @param data dataframe. datetime, flag_x, and all other parameter cols and
+#'  their flags
+#'
+#' @importFrom dplyr mutate_at case_when vars matches
+#' @importFrom magrittr "%>%"
+#'
+#' @return dataframe
+#' @export
+do_flag_final <- function(data) {
+
+  data <- data %>%
+    mutate_at(vars(matches("_Flag")), ~ case_when(flag_x != "" ~ flag_x,
+                                             TRUE ~ .x))
+
+}
