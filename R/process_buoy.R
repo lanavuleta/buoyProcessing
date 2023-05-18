@@ -38,7 +38,7 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   # Because every parameter in parameter_data should have a matching row in
   # sensor_chars to be able to assign flags
   check_params_units(data_params_units, sensor_chars)
-  check_error(error_drift, data_params_units)
+  error_drift <- check_error(error_drift, data_params_units)
 
   # TBD SOMEWHERE MAKE SURE THAT IT ALWAYS STARTS OUT READ AS CHAR?
   data <- read_data(data_fpath, row_param_names, row_data_start) %>%
@@ -49,5 +49,7 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   data <- data %>%
     flag(sensor_chars, sensor_maint)
 
+
+  # remove .x_Flag .x for dups eventually. Replace .. for spaces with spaces
 }
 

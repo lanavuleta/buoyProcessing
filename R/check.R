@@ -15,14 +15,16 @@ check_buoy_info <- function(info_fpath) {
 
   if (any(duplicated(sheets_current))) {
     stop(paste("Issue with the buoy info file. File has sheets with the same",
-               "name. Each sheet should have a unique name. Try again."))
+               "name. Each sheet should have a unique name. Try again."),
+         call. = FALSE)
   }
 
   if (any(!sheets_correct %in% sheets_current)) {
     stop(paste("Issue with the buoy info file. File must contain the following",
                "sheets: 'sensor_characteristics', 'sensor_maintenance',",
                "'error_drift'.",
-               "\nEdit accordingly and try again."))
+               "\nEdit accordingly and try again."),
+         call. = FALSE)
   }
 }
 
@@ -81,5 +83,67 @@ check_missing_chunks <- function(missing_chunks, time_small, time_large) {
   }
 
   return(missing_chunks)
+
+}
+
+#' Title
+#'
+#' @param error_drift dataframe. Output from read_error_drift()
+#' @inheritParams check_params_units
+#'
+#' @importFrom dplyr mutate select filter
+#' @importFrom magrittr "%>%"
+#' @importFrom fuzzyjoin regex_join
+#'
+#' @return printed statement if fail OR dataframe if success
+#' @export
+check_error <- function(error_drift, data_params_units) {
+
+  data_params_units <- data_params_units %>%
+    mutate(unit = ifelse(is.na(unit), "none", unit))
+
+  error_drift <- error_drift %>%
+    mutate(unit = ifelse(is.na(unit), "none", unit))
+
+  error_matches <- regex_join(data_params_units, error_drift,
+                              by = c("param" = "sensor", "unit"),
+                              mode = "right") %>%
+    # unit from data_params_units not needed. If there was a match, value is in
+    # unit.y, and if there was not a match, this is indicated by an empty param
+    # column
+    mutate(unit = unit.y) %>%
+    select(-c(unit.x, unit.y))
+
+  error_missing <- error_matches %>%
+    filter(is.na(param)) %>%
+    # Reorder to match the original error_drift file for better user understanding
+    select(colnames(error_drift))
+
+  if (nrow(error_missing != 0)) {
+    print.data.frame(error_missing)
+    stop(paste("Issue with the error drift sheet. The above row(s) could not",
+               "be matched with a parameter and unit from the buoy data.",
+               "\nNote that the matching process checks if the phrase found in",
+               "the 'sensor' column of the error drift is in any of the",
+               "parameter names from the buoy data sheet. That means that an",
+               "error reading with sensor 'pH' would be matched with the",
+               "'Deep_pH' and 'Shallow_pH' buoy parameters.",
+               "\nEdit the error drift sheet and try again."),
+         call. = FALSE)
+  } else {
+    print.data.frame(select(error_matches, colnames(error_drift)))
+    message(paste("Check the above table before proceeding. These are the matches",
+                  "between the error drift sheet and the available parameters in",
+                  "the buoy data identified by the tool.",
+                  "\nAre these correct? If not, edit the sensor names in the",
+                  "error drift sheet.",
+                  "\nNote that the matching process checks if the phrase found in",
+                  "the 'sensor' column of the error drift is in any of the",
+                  "parameter names from the buoy data sheet. That means that an",
+                  "error reading with sensor 'pH' would be matched with the",
+                  "'Deep_pH' and 'Shallow_pH' buoy parameters."))
+
+    return(error_matches)
+  }
 
 }

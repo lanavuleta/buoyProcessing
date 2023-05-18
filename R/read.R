@@ -148,7 +148,7 @@ read_error_drift <- function(info_fpath) {
   error_drift <- read_xlsx(info_fpath,
                            sheet = "error_drift")
 
-  cols_correct <- c("sensor", "calibration_type", "units", "date",
+  cols_correct <- c("sensor", "calibration_type", "unit", "date",
                     "sensor_model",	"depth", "pre_calibration",
                     "post_calibration", "pre_clean", "post_clean")
 
