@@ -60,9 +60,6 @@ read_data <- function(data_fpath, row_param_names, row_data_start) {
 #' @inheritParams process_buoy
 #'
 #' @importFrom readxl read_xlsx
-#' @importFrom dplyr mutate select
-#' @importFrom lubridate year month day hour minute minutes
-#' @importFrom magrittr "%>%"
 #'
 #' @return dataframe
 #' @export
@@ -79,59 +76,9 @@ read_sensor_maint <- function(info_fpath, timezone) {
                "more required column is missing.\nEdit accordingly and try again."))
   }
 
-  sensor_maint <- sensor_maint %>%
-    mutate(start_datetime = ISOdate(year(sensor_maint$start_date),
-                                    month(sensor_maint$start_date),
-                                    day(sensor_maint$start_date),
-                                    # Done like this because excel times are
-                                    # read in with an undesired dummy date
-                                    hour(sensor_maint$start_time),
-                                    minute(sensor_maint$start_time),
-                                    tz = timezone)
-           # Will flag X an additional 10 min before the
-           # end of the maintenance to allow parameters
-           # to settle
-           - minutes(10),
-           end_datetime   = ISOdate(year(sensor_maint$end_date),
-                                    month(sensor_maint$end_date),
-                                    day(sensor_maint$end_date),
-                                    # Done like this because excel times are
-                                    # read in with an undesired dummy date
-                                    hour(sensor_maint$end_time),
-                                    minute(sensor_maint$end_time),
-                                    tz = timezone)
-           # Will flag X an additional 30 min after the
-           # end of the maintenance to allow parameters
-           # to settle
-           + minutes(30)) %>%
-    select(start_datetime, end_datetime, flag)
+  sensor_maint <- edit_sensor_maint(sensor_maint, timezone)
 
-}
-
-#' Title
-#'
-#' @inheritParams process_buoy
-#'
-#' @importFrom readxl read_xlsx
-#'
-#' @return dataframe
-#' @export
-read_sensor_chars <- function(info_fpath) {
-
-  sensor_chars <- read_xlsx(info_fpath,
-                            sheet = "sensor_characteristics")
-
-  cols_correct <- c("sensor_header", "unit",
-                    "operating_range_min", "operating_range_max",
-                    "roc_threshold")
-
-  if (any(!cols_correct %in% colnames(sensor_chars))) {
-    stop(paste("Issue with the sensor characteristics sheet. Required column",
-               "names are:", paste(cols_correct, collapse = ", "), ". One or",
-               "more required column is missing.\nEdit accordingly and try again."))
-  }
-
-  return(sensor_chars)
+  return(sensor_maint)
 
 }
 
@@ -158,5 +105,36 @@ read_error_drift <- function(info_fpath) {
                "more required column is missing.\nEdit accordingly and try again."))
   }
 
+  error_drift <- edit_error_drift(error_drift)
+
   return(error_drift)
+}
+
+#' Title
+#'
+#' @inheritParams process_buoy
+#'
+#' @importFrom readxl read_xlsx
+#'
+#' @return dataframe
+#' @export
+read_sensor_chars <- function(info_fpath) {
+
+  sensor_chars <- read_xlsx(info_fpath,
+                            sheet = "sensor_characteristics")
+
+  cols_correct <- c("sensor_header", "unit",
+                    "operating_range_min", "operating_range_max",
+                    "roc_threshold")
+
+  if (any(!cols_correct %in% colnames(sensor_chars))) {
+    stop(paste("Issue with the sensor characteristics sheet. Required column",
+               "names are:", paste(cols_correct, collapse = ", "), ". One or",
+               "more required column is missing.\nEdit accordingly and try again."))
+  }
+
+  sensor_chars <- edit_sensor_chars(sensor_chars)
+
+  return(sensor_chars)
+
 }

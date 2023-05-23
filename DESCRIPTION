@@ -20,4 +20,5 @@ Imports:
     readxl,
     sqldf,
     stats,
-    stringr
+    stringr,
+    tidyr
