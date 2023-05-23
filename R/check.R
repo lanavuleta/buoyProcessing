@@ -31,9 +31,8 @@ check_buoy_info <- function(info_fpath) {
 #' Title
 #'
 #' @param data_params_units dataframe. Output from read_data_params_units()
-#' @param sensor_chars dataframe. Output from read_sensor_chars()
+#' @inheritParams edit_sensor_chars
 #'
-#' @return dataframe
 #' @export
 check_params_units <- function(data_params_units, sensor_chars) {
 
@@ -53,69 +52,82 @@ check_params_units <- function(data_params_units, sensor_chars) {
 
 #' Title
 #'
-#' @param missing_chunks dataframe. Edited run length encoding created in do_flag_1()
-#' @inheritParams do_flag_1
+#' @inheritParams edit_error_drift
 #'
-#' @importFrom dplyr lead lag
+#' @importFrom dplyr filter
+#' @importFrom magrittr "%>%"
 #'
-#' @return dataframe
 #' @export
-check_missing_chunks <- function(missing_chunks, time_small, time_large) {
+check_error_drift <- function(error_drift) {
 
-  for (i in 1:nrow(missing_chunks)) {
-    # Check for values missing for short period of time
-    if (missing_chunks$values[i] == "M" & missing_chunks$lengths[i] <= time_small) {
-      missing_chunks$flag_1[i] <- "B1"
-    }
-    # Check for few values recorded in a large block of missing values
-    if (missing_chunks$values[i] == "" & missing_chunks$lengths[i] <= time_small &
-        # Using all() to account for start or end rows. If a short block of values
-        # is followed/preceded by a large chunk of missing values and is at the
-        # start/end (respectively) of the dataset, it still counts as a few values
-        # recorded in a large block of missing
-        all((lead(missing_chunks)$lengths[i] >= time_large &
-             lead(missing_chunks)$values[i] == "M"),
-            (lag(missing_chunks)$lengths[i] >= time_large &
-             lag(missing_chunks)$values[i] == "M"),
-            na.rm = TRUE)) {
-      missing_chunks$flag_1[i] <- "B1"
-    }
+  # Checking that each set of pre and post values are valid --------------------
+  unmatched_pre_post <- error_drift %>%
+    filter(xor(is.na(pre_calibration), is.na(post_calibration)) |
+             xor(is.na(pre_clean), is.na(post_clean)))
+
+  if (nrow(unmatched_pre_post) != 0) {
+    print.data.frame(unmatched_pre_post)
+    stop(paste("Issue with the error drift sheet. If a parameter has one of the",
+               "pre or post values filled in, the associated pre or post value",
+               "is also expected to be filled in. The above rows do not fulfill",
+               "this requirement. Edit accordingly and try again."),
+         call. = FALSE)
   }
-
-  return(missing_chunks)
 
 }
 
 #' Title
 #'
-#' @param error_drift dataframe. Output from read_error_drift()
-#' @inheritParams check_params_units
+#' @inheritParams edit_sensor_chars
 #'
-#' @importFrom dplyr mutate select filter
+#' @importFrom dplyr rowwise mutate filter select case_when
+#' @importFrom magrittr "%>%"
+#'
+#' @export
+check_sensor_chars <- function(sensor_chars) {
+
+  # Checking if the accuracy
+  bad_accuracy <- sensor_chars %>%
+    rowwise() %>%
+    mutate(accuracy_issues = ifelse(is.na(accuracy),
+                                    NA,
+                                    case_when(is.na(unit)
+                                              ~ !grepl(paste0("+/- ?\\d+\\.?\\d*.*"),
+                                                       accuracy),
+                                              TRUE
+                                              ~ !grepl(paste0("+/- ?\\d+\\.?\\d* *(", unit, ").*"),
+                                                       accuracy)))) %>%
+    filter(isTRUE(accuracy_issues)) %>%
+    select(-accuracy_issues)
+
+  if (nrow(bad_accuracy) != 0) {
+    print.data.frame(bad_accuracy)
+    stop(paste("Issue with the sensor characteristics sheet. Expected values in",
+               "the accuracy column look like '+/- VALUE UNIT', where VALUE is",
+               "some numeric value, and UNIT matches the unit listed in the",
+               "unit column.",
+               "\nEdit the sensor characteristics sheet accordingly and try again."))
+  }
+
+}
+
+#' Title
+#'
+#' @inheritParams edit_sensor_chars
+#' @inheritParams edit_error_drift
+#'
+#' @importFrom dplyr mutate filter select
 #' @importFrom magrittr "%>%"
 #' @importFrom fuzzyjoin regex_join
 #'
-#' @return printed statement if fail OR dataframe if success
 #' @export
-check_error <- function(error_drift, data_params_units) {
+check_chars_error_match <- function(sensor_chars, error_drift) {
 
-  data_params_units <- data_params_units %>%
-    mutate(unit = ifelse(is.na(unit), "none", unit))
-
-  error_drift <- error_drift %>%
-    mutate(unit = ifelse(is.na(unit), "none", unit))
-
-  error_matches <- regex_join(data_params_units, error_drift,
-                              by = c("param" = "sensor", "unit"),
+  error_missing <- regex_join(sensor_chars, error_drift,
+                              by = c("sensor_header" = "sensor", "unit"),
                               mode = "right") %>%
-    # unit from data_params_units not needed. If there was a match, value is in
-    # unit.y, and if there was not a match, this is indicated by an empty param
-    # column
+    filter(is.na(sensor_header)) %>%
     mutate(unit = unit.y) %>%
-    select(-c(unit.x, unit.y))
-
-  error_missing <- error_matches %>%
-    filter(is.na(param)) %>%
     # Reorder to match the original error_drift file for better user understanding
     select(colnames(error_drift))
 
@@ -131,7 +143,13 @@ check_error <- function(error_drift, data_params_units) {
                "\nEdit the error drift sheet and try again."),
          call. = FALSE)
   } else {
-    print.data.frame(select(error_matches, colnames(error_drift)))
+    matches_chars_error <- match_chars_error(sensor_chars, error_drift)
+
+    print.data.frame(matches_chars_error %>%
+                       select(sensor_chars_param = sensor_header,
+                              error_drift_param = sensor,
+                              unit) %>%
+                       filter(!is.na(error_drift_param)))
     message(paste("Check the above table before proceeding. These are the matches",
                   "between the error drift sheet and the available parameters in",
                   "the buoy data identified by the tool.",
@@ -142,8 +160,37 @@ check_error <- function(error_drift, data_params_units) {
                   "parameter names from the buoy data sheet. That means that an",
                   "error reading with sensor 'pH' would be matched with the",
                   "'Deep_pH' and 'Shallow_pH' buoy parameters."))
+  }
+}
 
-    return(error_matches)
+#' Title
+#'
+#' @inheritParams edit_sensor_chars
+#'
+#' @importFrom dplyr select filter
+#' @importFrom magrittr "%>%"
+#'
+#' @export
+check_accuracy_for_grading <- function(sensor_chars) {
+
+  missing_accuracy <- sensor_chars %>%
+    # Select all rows with a pre calibration or clean value (check_error will
+    # have ensured that if a pre value exists, a post value does too). These are
+    # the rows for which a grade will be calculated and an accuracy is therefore
+    # required
+    rowwise() %>%
+    filter(!is.null(unlist(error_info)) & is.na(accuracy_val))
+
+  if (nrow(missing_accuracy != 0)) {
+    print.data.frame(missing_accuracy %>%
+                       select(sensor_header:roc_threshold))
+    stop(paste("Issue with sensor characteristics. Trying to calculate error and",
+               "assign grades. For each of the parameters listed in the error",
+               "drift sheet, the sensor characteristics sheet must list an",
+               "accuracy, as the accuracy is used to determine the grade.",
+               "\nIn the sensor characteristics sheet, add an accuracy to the",
+               "parameters listed above and try again."),
+         call. = FALSE)
   }
 
 }

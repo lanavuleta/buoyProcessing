@@ -65,7 +65,7 @@ edit_error_drift <- function(error_drift) {
     select(-c(pre_calibration, post_calibration, pre_clean, post_clean,
               error_calib, error_clean)) %>%
     # There might be numerous calibrations over a season for each sensor
-    nest(data = c(date, error))
+    nest(error_info = c(date, error))
 
 }
 
@@ -122,9 +122,9 @@ combine_chars_with_error <- function(sensor_chars, error_drift) {
 
   sensor_chars <- sensor_chars %>%
     match_chars_error(error_drift) %>%
-    select(colnames(sensor_chars),
-           pre_calibration, post_calibration,
-           pre_clean, post_clean) %>%
+    select(sensor_header, unit, operating_range_min, operating_range_max,
+           roc_threshold, accuracy_val, calibration_type, sensor_model, depth,
+           error_info) %>%
     mutate(unit = ifelse(unit == "none", NA, unit))
 
   check_accuracy_for_grading(sensor_chars)
