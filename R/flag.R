@@ -56,9 +56,9 @@ flag <- function(data, sensor_chars, sensor_maint) {
 do_flag_x <- function(data, sensor_maint) {
 
   data <- sqldf("SELECT * FROM data
-                LEFT JOIN sensor_maint
-                ON data.datetime >= sensor_maint.start_datetime AND
-                  data.datetime <= sensor_maint.end_datetime") %>%
+                 LEFT JOIN sensor_maint
+                 ON data.datetime >= sensor_maint.start_datetime AND
+                    data.datetime <= sensor_maint.end_datetime") %>%
     select(-c(start_datetime, end_datetime)) %>%
     rename(flag_x = flag)
 
@@ -128,7 +128,7 @@ do_flag_1 <- function(data_poi, time_small, time_large) {
            flag_1 = "",
            lengths = as.numeric(lengths)) %>%
     select(-c(end_datetime_i, start_datetime_i)) %>%
-    check_missing_chunks(time_small, time_large)
+    missing_chunks_flag_1(time_small, time_large)
 
   data_poi <- sqldf("SELECT * FROM data_poi
                  LEFT JOIN missing_chunks
@@ -179,8 +179,7 @@ do_flag_2 <- function(data_poi, operating_range_min, operating_range_max) {
 #' @export
 do_flag_3 <- function(data_poi) {
 
-  ci <- calculate_99_ci(filter(data_poi,
-                               flag_m != "M" & flag_1 != "B1" & flag_2 != "B2")[,2])
+  ci <- calculate_99_ci(data_poi)
 
   local_range_min <- ci[[which(names(ci) == "bound_lower")]]
   local_range_min <- ci[[which(names(ci) == "bound_upper")]]
@@ -249,5 +248,41 @@ do_flag_final <- function(data) {
   data <- data %>%
     mutate_at(vars(matches("_Flag")), ~ case_when(flag_x != "" ~ flag_x,
                                              TRUE ~ .x))
+
+}
+
+
+#' Title
+#'
+#' @param missing_chunks dataframe. Edited run length encoding created in do_flag_1()
+#' @inheritParams do_flag_1
+#'
+#' @importFrom dplyr lead lag
+#'
+#' @return dataframe
+#' @export
+missing_chunks_flag_1 <- function(missing_chunks, time_small, time_large) {
+
+  for (i in 1:nrow(missing_chunks)) {
+    # Check for values missing for short period of time
+    if (missing_chunks$values[i] == "M" & missing_chunks$lengths[i] <= time_small) {
+      missing_chunks$flag_1[i] <- "B1"
+    }
+    # Check for few values recorded in a large block of missing values
+    if (missing_chunks$values[i] == "" & missing_chunks$lengths[i] <= time_small &
+        # Using all() to account for start or end rows. If a short block of values
+        # is followed/preceded by a large chunk of missing values and is at the
+        # start/end (respectively) of the dataset, it still counts as a few values
+        # recorded in a large block of missing
+        all((lead(missing_chunks)$lengths[i] >= time_large &
+             lead(missing_chunks)$values[i] == "M"),
+            (lag(missing_chunks)$lengths[i] >= time_large &
+             lag(missing_chunks)$values[i] == "M"),
+            na.rm = TRUE)) {
+      missing_chunks$flag_1[i] <- "B1"
+    }
+  }
+
+  return(missing_chunks)
 
 }
