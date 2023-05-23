@@ -26,9 +26,10 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   # Ensure sheets are done correctly such that process can continue as planned
   check_buoy_info(info_fpath)
 
-  sensor_chars <- read_sensor_chars(info_fpath)
   sensor_maint <- read_sensor_maint(info_fpath, timezone)
   error_drift  <- read_error_drift(info_fpath)
+  sensor_chars <- read_sensor_chars(info_fpath) %>%
+    combine_chars_with_error(error_drift)
 
   # Read in data from buoy_data ------------------------------------------------
   data_params_units <- read_data_params_units(data_fpath,
@@ -38,7 +39,6 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   # Because every parameter in parameter_data should have a matching row in
   # sensor_chars to be able to assign flags
   check_params_units(data_params_units, sensor_chars)
-  error_drift <- check_error(error_drift, data_params_units)
 
   # TBD SOMEWHERE MAKE SURE THAT IT ALWAYS STARTS OUT READ AS CHAR?
   data <- read_data(data_fpath, row_param_names, row_data_start) %>%
