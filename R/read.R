@@ -85,12 +85,13 @@ read_sensor_maint <- function(info_fpath, timezone) {
 #' Title
 #'
 #' @inheritParams process_buoy
+#' @param sensor_maint dataframe. Output from read_sensor_maint()
 #'
 #' @importFrom readxl read_xlsx
 #'
 #' @return dataframe
 #' @export
-read_error_drift <- function(info_fpath) {
+read_error_drift <- function(info_fpath, sensor_maint) {
 
   error_drift <- read_xlsx(info_fpath,
                            sheet = "error_drift")
@@ -105,7 +106,7 @@ read_error_drift <- function(info_fpath) {
                "more required column is missing.\nEdit accordingly and try again."))
   }
 
-  error_drift <- edit_error_drift(error_drift)
+  error_drift <- edit_error_drift(error_drift, sensor_maint)
 
   return(error_drift)
 }

@@ -165,6 +165,31 @@ check_chars_error_match <- function(sensor_chars, error_drift) {
 
 #' Title
 #'
+#' @param error_drift dataframe. Output from match_error_maint()
+#'
+#' @importFrom dplyr filter select
+#' @importFrom magrittr "%>%"
+#'
+#' @return print statement if error
+#' @export
+check_error_maint_match <- function(error_drift) {
+
+  missing_date <- error_drift %>%
+    filter(is.na(end_datetime)) %>%
+    select(date) %>%
+    unique()
+
+  if (nrow(missing_date) != 0) {
+    print.data.frame(missing_date)
+    stop(paste("Issue with the error drift sheet. The date(s) printed above",
+               "could not be matched with a date in the sensor maintenance",
+               "sheet. Edit the dates accordingly and try again."))
+  }
+
+}
+
+#' Title
+#'
 #' @inheritParams edit_sensor_chars
 #'
 #' @importFrom dplyr select filter

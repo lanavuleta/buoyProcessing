@@ -4,10 +4,12 @@
 \alias{read_error_drift}
 \title{Title}
 \usage{
-read_error_drift(info_fpath)
+read_error_drift(info_fpath, sensor_maint)
 }
 \arguments{
 \item{info_fpath}{file path. Path to the buoy info excel file}
+
+\item{sensor_maint}{dataframe. Output from read_sensor_maint()}
 }
 \value{
 dataframe

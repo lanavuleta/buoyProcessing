@@ -22,3 +22,5 @@ Imports:
     stats,
     stringr,
     tidyr
+URL: https://github.com/lanavuleta/buoyProcessing
+BugReports: https://github.com/lanavuleta/buoyProcessing/issues

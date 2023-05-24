@@ -43,6 +43,7 @@ edit_sensor_maint <- function(sensor_maint, timezone) {
 #' Title
 #'
 #' @param error_drift dataframe. Output from read_error_drift()
+#' @inheritParams read_error_drift
 #'
 #' @importFrom dplyr mutate select rowwise
 #' @importFrom tidyr nest
@@ -50,9 +51,13 @@ edit_sensor_maint <- function(sensor_maint, timezone) {
 #'
 #' @return dataframe
 #' @export
-edit_error_drift <- function(error_drift) {
+edit_error_drift <- function(error_drift, sensor_maint) {
 
   check_error_drift(error_drift)
+
+  error_drift <- match_error_maint(error_drift, sensor_maint)
+
+  check_error_maint_match(error_drift)
 
   error_drift <- error_drift %>%
     mutate(error_calib = abs(pre_calibration - post_calibration),
@@ -63,9 +68,9 @@ edit_error_drift <- function(error_drift) {
     mutate(error = case_when(is.na(error_calib) & is.na(error_clean) ~ NA,
                              TRUE ~ sum(error_calib, error_clean, na.rm = TRUE))) %>%
     select(-c(pre_calibration, post_calibration, pre_clean, post_clean,
-              error_calib, error_clean)) %>%
+              error_calib, error_clean, date)) %>%
     # There might be numerous calibrations over a season for each sensor
-    nest(error_info = c(date, error))
+    nest(error_info = c(end_datetime, error))
 
 }
 
