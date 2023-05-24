@@ -31,7 +31,6 @@ flag <- function(data, sensor_chars, sensor_maint) {
                              operating_range_mins, operating_range_maxs,
                              roc_thresholds),
                         flag_poi,
-                        sensor_chars, sensor_maint,
                         time_small = flag_intervals[[which(names(flag_intervals) == "time_small")]],
                         time_large = flag_intervals[[which(names(flag_intervals) == "time_large")]])
 
@@ -71,7 +70,6 @@ do_flag_x <- function(data, sensor_maint) {
 #' @param operating_range_min numeric. Operating range minimum
 #' @param operating_range_max numeric. Operating range maximum
 #' @param roc_threshold numeric. Maximum allowed rate of change
-#' @inheritParams flag
 #' @param time_small numeric. Number of rows that counts as a small block of data
 #' @param time_large numeric. Number of rows that counts as a large block of data
 #'
@@ -83,7 +81,7 @@ do_flag_x <- function(data, sensor_maint) {
 flag_poi <- function(data_poi,
                      operating_range_min, operating_range_max,
                      roc_threshold,
-                     sensor_chars, sensor_maint, time_small, time_large) {
+                     time_small, time_large) {
 
   parameter <- colnames(data_poi)[2]
 
@@ -179,14 +177,14 @@ do_flag_2 <- function(data_poi, operating_range_min, operating_range_max) {
 #' @export
 do_flag_3 <- function(data_poi) {
 
-  ci <- calculate_99_ci(data_poi)
+  ci <- calculate_99_ci(data_poi[,2])
 
   local_range_min <- ci[[which(names(ci) == "bound_lower")]]
-  local_range_min <- ci[[which(names(ci) == "bound_upper")]]
+  local_range_max <- ci[[which(names(ci) == "bound_upper")]]
 
   data_poi <- data_poi %>%
     mutate(flag_3 = case_when(.[[2]] <= local_range_min |
-                                .[[2]] >= local_range_min
+                                .[[2]] >= local_range_max
                               ~ "B3",
                               TRUE ~ ""))
 

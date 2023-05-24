@@ -33,9 +33,9 @@ get_flag_intervals <- function(data) {
 #' @export
 calculate_99_ci <- function(values) {
 
-  values_mean <- mean(values)
+  values_mean <- mean(values, na.rm = TRUE)
   n <- length(values)
-  standard_deviation <- sd(values)
+  standard_deviation <- sd(values, na.rm = TRUE)
 
   error <- qnorm(0.995) * standard_deviation/sqrt(n)
 

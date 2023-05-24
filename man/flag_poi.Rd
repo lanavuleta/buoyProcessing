@@ -9,8 +9,6 @@ flag_poi(
   operating_range_min,
   operating_range_max,
   roc_threshold,
-  sensor_chars,
-  sensor_maint,
   time_small,
   time_large
 )
@@ -24,10 +22,6 @@ and created flag columns as their respective do_flag functions are run}
 \item{operating_range_max}{numeric. Operating range maximum}
 
 \item{roc_threshold}{numeric. Maximum allowed rate of change}
-
-\item{sensor_chars}{dataframe. Output from read_sensor_chars()}
-
-\item{sensor_maint}{Output from read_sensor_maint()}
 
 \item{time_small}{numeric. Number of rows that counts as a small block of data}
 
