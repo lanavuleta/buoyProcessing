@@ -11,6 +11,7 @@ handle_poi(
   roc_threshold,
   accuracy,
   error_info,
+  parameter,
   time_small,
   time_large
 )
@@ -27,6 +28,8 @@ handle_poi(
 \item{accuracy}{numeric. Instrument accuracy}
 
 \item{error_info}{dataframe}
+
+\item{parameter}{string. Parameter name}
 
 \item{time_small}{numeric. Number of rows that indicate a small time step}
 

@@ -4,7 +4,7 @@
 \alias{error_poi}
 \title{Title}
 \usage{
-error_poi(data_poi, accuracy, error_info)
+error_poi(data_poi, accuracy, error_info, parameter)
 }
 \arguments{
 \item{data_poi}{dataframe. Output from flag_poi()}
@@ -12,6 +12,8 @@ error_poi(data_poi, accuracy, error_info)
 \item{accuracy}{numeric. Instrument accuracy}
 
 \item{error_info}{dataframe}
+
+\item{parameter}{string. Parameter name}
 }
 \value{
 dataframe

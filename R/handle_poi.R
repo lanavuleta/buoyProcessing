@@ -32,10 +32,13 @@ flag_and_error <- function(data, sensor_chars, sensor_maint) {
   accuracies  <- sensor_chars$accuracy_val
   error_infos <- sensor_chars$error_info
 
+  parameters <- sensor_chars$sensor_header
+
   data_pois <- pmap_dfc(list(data_pois,
                              operating_range_mins, operating_range_maxs,
                              roc_thresholds,
-                             accuracies, error_infos),
+                             accuracies, error_infos,
+                             parameters),
                         handle_poi,
                         time_small, time_large)
 
@@ -57,6 +60,7 @@ flag_and_error <- function(data, sensor_chars, sensor_maint) {
 #' @param error_info dataframe
 #' @param time_small numeric. Number of rows that indicate a small time step
 #' @param time_large numeric. Number of rows that indicate a large time step
+#' @param parameter string. Parameter name
 #'
 #' @return dataframe
 #' @export
@@ -64,13 +68,23 @@ handle_poi <- function(data_poi,
                        operating_range_min, operating_range_max,
                        roc_threshold,
                        accuracy, error_info,
+                       parameter,
                        time_small, time_large) {
 
   data_poi <- data_poi %>%
     flag_poi(operating_range_min, operating_range_max,
              roc_threshold,
-             time_small, time_large) %>%
-    error_poi(accuracy, error_info)
+             time_small, time_large,
+             parameter) %>%
+    error_poi(accuracy, error_info,
+              parameter) %>%
+    select(-(datetime))
+
+  # Use name from sensor_chars because if two columns from buoy data have the
+  # same name, R will change the column name
+  colnames(data_poi)[1] <- paste(parameter)
+
+  return(data_poi)
 
 }
 
@@ -86,9 +100,8 @@ handle_poi <- function(data_poi,
 flag_poi <- function(data_poi,
                      operating_range_min, operating_range_max,
                      roc_threshold,
-                     time_small, time_large) {
-
-  parameter <- colnames(data_poi)[2]
+                     time_small, time_large,
+                     parameter) {
 
   data_poi <- data_poi %>%
     mutate(flag_m = case_when(.[[2]] %in% missing_vals ~ "M",
@@ -102,7 +115,9 @@ flag_poi <- function(data_poi,
     do_flag_m_to_4() %>%
     select(datetime, 2, flag)
 
-  colnames(data_poi)[3] <- paste(colnames(data_poi)[2], "Flag", sep = "_")
+  # Use name from sensor_chars because if two columns from buoy data have the
+  # same name, R will change the column name
+  colnames(data_poi)[3] <- paste(parameter, "Flag", sep = "_")
 
   return(data_poi)
 
@@ -117,7 +132,7 @@ flag_poi <- function(data_poi,
 #'
 #' @return dataframe
 #' @export
-error_poi <- function(data_poi, accuracy, error_info) {
+error_poi <- function(data_poi, accuracy, error_info, parameter) {
 
   if (!is.null(error_info)) {
 
@@ -134,11 +149,11 @@ error_poi <- function(data_poi, accuracy, error_info) {
 
     }
 
-    colnames(data_poi)[4] <- paste(colnames(data_poi)[2], "Error", sep = "_")
+    # Use name from sensor_chars because if two columns from buoy data have the
+    # same name, R will change the column name
+    colnames(data_poi)[4] <- paste(parameter, "Error", sep = "_")
 
   }
-
-  data_poi <- select(data_poi, -(datetime))
 
   return(data_poi)
 

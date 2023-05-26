@@ -46,9 +46,8 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   # Perform steps 2 (flag) and 3 (error) ---------------------------------------
 
   data <- data %>%
-    flag_and_error(sensor_chars, sensor_maint)
+    flag_and_error(sensor_chars, sensor_maint) %>%
+    handle_dup_names()
 
-
-  # remove .x_Flag .x for dups eventually. Replace .. for spaces with spaces
 }
 

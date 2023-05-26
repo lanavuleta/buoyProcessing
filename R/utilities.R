@@ -43,3 +43,20 @@ calculate_99_ci <- function(values) {
            bound_upper = values_mean + error))
 
 }
+
+#' Title
+#'
+#' @param data dataframe. Output from flag_and_error
+#'
+#' @return dataframe
+#' @export
+handle_dup_names <- function(data) {
+  for (i in 1:ncol(data)) {
+    if (grepl("\\.\\.\\.\\d{1,2}", colnames(data)[i])) {
+      colnames(data)[i] <- gsub("\\.\\.\\.\\d{1,2}", "", colnames(data)[i])
+    }
+  }
+
+  return(data)
+}
+

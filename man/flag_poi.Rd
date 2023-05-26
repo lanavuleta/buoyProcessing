@@ -10,7 +10,8 @@ flag_poi(
   operating_range_max,
   roc_threshold,
   time_small,
-  time_large
+  time_large,
+  parameter
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ flag_poi(
 \item{time_small}{numeric. Number of rows that indicate a small time step}
 
 \item{time_large}{numeric. Number of rows that indicate a large time step}
+
+\item{parameter}{string. Parameter name}
 }
 \value{
 dataframe
