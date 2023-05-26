@@ -9,9 +9,9 @@ missing_chunks_flag_1(missing_chunks, time_small, time_large)
 \arguments{
 \item{missing_chunks}{dataframe. Edited run length encoding created in do_flag_1()}
 
-\item{time_small}{numeric. Number of rows that counts as a small block of data}
+\item{time_small}{numeric. Number of rows that indicate a small time step}
 
-\item{time_large}{numeric. Number of rows that counts as a large block of data}
+\item{time_large}{numeric. Number of rows that indicate a large time step}
 }
 \value{
 dataframe

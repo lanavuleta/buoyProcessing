@@ -1,6 +1,6 @@
 #' Title
 #'
-#' @inheritParams flag
+#' @inheritParams flag_and_error
 #'
 #' @importFrom lubridate time_length hours
 #'

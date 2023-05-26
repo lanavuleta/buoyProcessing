@@ -1,50 +1,6 @@
 #' Title
 #'
-#' @inheritParams format_datetime
-#' @inheritParams check_params_units
-#' @param sensor_maint Output from read_sensor_maint()
-#'
-#' @importFrom purrr map pmap_dfc
-#' @importFrom magrittr "%>%"
-#' @importFrom dplyr select all_of
-#'
-#' @return dataframe
-#' @export
-flag <- function(data, sensor_chars, sensor_maint) {
-
-  flag_intervals <- get_flag_intervals(data)
-
-  data <- data %>%
-    do_flag_x(sensor_maint)
-
-  cols <- seq(2,ncol(data)-1)
-
-  # pois = ParameterS Of Interest
-  data_pois <- cols %>% map(function(x) select(data, all_of(c(1, x))))
-
-  operating_range_mins <- sensor_chars$operating_range_min
-  operating_range_maxs <- sensor_chars$operating_range_max
-
-  roc_thresholds <- sensor_chars$roc_threshold
-
-  data_pois <- pmap_dfc(list(data_pois,
-                             operating_range_mins, operating_range_maxs,
-                             roc_thresholds),
-                        flag_poi,
-                        time_small = flag_intervals[[which(names(flag_intervals) == "time_small")]],
-                        time_large = flag_intervals[[which(names(flag_intervals) == "time_large")]])
-
-  data <- data %>%
-    select(datetime, flag_x) %>%
-    cbind(data_pois) %>%
-    do_flag_final() %>%
-    select(-flag_x)
-
-}
-
-#' Title
-#'
-#' @inheritParams flag
+#' @inheritParams flag_and_error
 #'
 #' @importFrom sqldf sqldf
 #' @importFrom dplyr select rename
@@ -60,46 +16,6 @@ do_flag_x <- function(data, sensor_maint) {
                     data.datetime <= sensor_maint.end_datetime") %>%
     select(-c(start_datetime, end_datetime)) %>%
     rename(flag_x = flag)
-
-}
-
-#' Title
-#'
-#' @param data_poi dataframe. Buoy data's datetime column, parameter of interest
-#'  and created flag columns as their respective do_flag functions are run
-#' @param operating_range_min numeric. Operating range minimum
-#' @param operating_range_max numeric. Operating range maximum
-#' @param roc_threshold numeric. Maximum allowed rate of change
-#' @param time_small numeric. Number of rows that counts as a small block of data
-#' @param time_large numeric. Number of rows that counts as a large block of data
-#'
-#' @importFrom dplyr mutate mutate_at case_when
-#' @importFrom magrittr "%>%"
-#'
-#' @return dataframe
-#' @export
-flag_poi <- function(data_poi,
-                     operating_range_min, operating_range_max,
-                     roc_threshold,
-                     time_small, time_large) {
-
-  parameter <- colnames(data_poi)[2]
-
-  data_poi <- data_poi %>%
-    mutate(flag_m = case_when(.[[2]] %in% missing_vals ~ "M",
-                              TRUE ~ "")) %>%
-    mutate_at(2, as.numeric) %>%
-
-    do_flag_1(time_small, time_large) %>%
-    do_flag_2(operating_range_min, operating_range_max) %>%
-    do_flag_3() %>%
-    do_flag_4(roc_threshold) %>%
-    do_flag_m_to_4() %>%
-    select(2, flag)
-
-  colnames(data_poi)[2] <- paste(colnames(data_poi)[1], "Flag", sep = "_")
-
-  return(data_poi)
 
 }
 

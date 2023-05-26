@@ -7,12 +7,11 @@
 do_flag_1(data_poi, time_small, time_large)
 }
 \arguments{
-\item{data_poi}{dataframe. Buoy data's datetime column, parameter of interest
-and created flag columns as their respective do_flag functions are run}
+\item{data_poi}{dataframe. Datetime column and parameter of interest column}
 
-\item{time_small}{numeric. Number of rows that counts as a small block of data}
+\item{time_small}{numeric. Number of rows that indicate a small time step}
 
-\item{time_large}{numeric. Number of rows that counts as a large block of data}
+\item{time_large}{numeric. Number of rows that indicate a large time step}
 }
 \value{
 dataframe

@@ -7,8 +7,7 @@
 do_flag_m_to_4(data_poi)
 }
 \arguments{
-\item{data_poi}{dataframe. Buoy data's datetime column, parameter of interest
-and created flag columns as their respective do_flag functions are run}
+\item{data_poi}{dataframe. Datetime column and parameter of interest column}
 }
 \value{
 dataframe

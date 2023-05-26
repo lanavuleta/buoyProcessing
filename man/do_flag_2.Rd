@@ -7,8 +7,7 @@
 do_flag_2(data_poi, operating_range_min, operating_range_max)
 }
 \arguments{
-\item{data_poi}{dataframe. Buoy data's datetime column, parameter of interest
-and created flag columns as their respective do_flag functions are run}
+\item{data_poi}{dataframe. Datetime column and parameter of interest column}
 
 \item{operating_range_min}{numeric. Operating range minimum}
 
