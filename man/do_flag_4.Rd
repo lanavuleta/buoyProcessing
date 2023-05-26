@@ -4,12 +4,14 @@
 \alias{do_flag_4}
 \title{Title}
 \usage{
-do_flag_4(data_poi, roc_threshold)
+do_flag_4(data_poi, roc_threshold, time_small)
 }
 \arguments{
 \item{data_poi}{dataframe. Datetime column and parameter of interest column}
 
 \item{roc_threshold}{numeric. Maximum allowed rate of change}
+
+\item{time_small}{numeric. Number of rows that indicate a small time step}
 }
 \value{
 dataframe

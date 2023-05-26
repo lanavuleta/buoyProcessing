@@ -17,6 +17,7 @@ Imports:
     lubridate,
     magrittr,
     purrr,
+    RcppRoll,
     readr,
     readxl,
     sqldf,

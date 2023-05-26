@@ -112,18 +112,41 @@ do_flag_3 <- function(data_poi) {
 #'
 #' @importFrom dplyr mutate select case_when lag lead
 #' @importFrom magrittr "%>%"
+#' @importFrom RcppRoll roll_median
 #'
 #' @return dataframe
 #' @export
-do_flag_4 <- function(data_poi, roc_threshold) {
+do_flag_4 <- function(data_poi, roc_threshold, time_small) {
 
-  data_poi <- data_poi %>%
-    mutate(diff = abs(.[[2]] - lag(.[[2]])),
-           flag_4 = case_when((    diff   >= roc_threshold |
-                               lag(diff)  >= roc_threshold |
-                               lead(diff) >= roc_threshold) ~ "B4",
-                              TRUE ~ "")) %>%
-    select(-diff)
+  # In literature, flag data when their absolute deviation around the median
+  # calculated over the last w previous values is larger than 3 times their median.
+  # If no ROC is given, use the equation used in the literature
+  if (is.na(roc_threshold)) {
+    data_poi$med <- lag(roll_median(unlist(data_poi[,2]),
+                                     n = 10, fill = NA, align = "right"))
+
+    data_poi <- data_poi %>%
+      mutate(flag_4 = case_when(abs(med - .[[2]]) > 3*med ~ "B4",
+                                TRUE ~ ""),
+             # Flag the values on either side of the large roc
+             flag_4 = ifelse((lag(flag_4) == "B4" | lead(flag_4) == "B4"),
+                             "B4",
+                             ""),
+             # roll_median leaves NAs
+             flag_4 = ifelse(is.na(flag_4), "", flag_4)) %>%
+      select(-med)
+  } else {
+    data_poi <- data_poi %>%
+      mutate(diff = abs(.[[2]] - lag(.[[2]])),
+             flag_4 = case_when((    diff   >= roc_threshold |
+                                 # Flag the values on either side of the large roc
+                                 lag(diff)  >= roc_threshold |
+                                 lead(diff) >= roc_threshold) ~ "B4",
+                                TRUE ~ "")) %>%
+      select(-diff)
+  }
+
+  return(data_poi)
 
 }
 
