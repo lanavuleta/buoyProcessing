@@ -31,19 +31,22 @@ read_data_params_units <- function(data_fpath, row_param_names, row_units) {
 #' Title
 #'
 #' @inheritParams process_buoy
+#' @inheritParams check_params_units
 #'
 #' @importFrom dplyr filter row_number
 #' @importFrom magrittr "%>%"
-#' @importFrom utils read.csv
+#' @importFrom readr read_csv
 #'
 #' @return dataframe
 #' @export
-read_data <- function(data_fpath, row_param_names, row_data_start) {
+read_data <- function(data_fpath, row_param_names, row_data_start, data_params_units) {
 
-  data <- read.csv(data_fpath,
+  data <- read_csv(data_fpath,
                    # Do row_xx-1 because the read in process turns the first row
                    # into column header
-                   skip = row_param_names-1) %>%
+                   skip = row_param_names-1,
+                   # Read all columns as character to keep any missing data strings
+                   col_types = strrep("c", nrow(data_params_units) + 1)) %>%
     # Need to calculate the new start of the data considering the rows that have
     # already been skipped
     filter(row_number() >= row_data_start - row_param_names)

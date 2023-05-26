@@ -4,7 +4,7 @@
 \alias{read_data}
 \title{Title}
 \usage{
-read_data(data_fpath, row_param_names, row_data_start)
+read_data(data_fpath, row_param_names, row_data_start, data_params_units)
 }
 \arguments{
 \item{data_fpath}{file path. Path to the raw buoy data file}
@@ -12,6 +12,8 @@ read_data(data_fpath, row_param_names, row_data_start)
 \item{row_param_names}{numeric. Row at which parameter names are listed}
 
 \item{row_data_start}{numeric. Row at which buoy data begins}
+
+\item{data_params_units}{dataframe. Output from read_data_params_units()}
 }
 \value{
 dataframe

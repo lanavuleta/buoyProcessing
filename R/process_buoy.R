@@ -27,7 +27,7 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   check_buoy_info(info_fpath)
 
   sensor_maint <- read_sensor_maint(info_fpath, timezone)
-  error_drift  <- read_error_drift(info_fpath)
+  error_drift  <- read_error_drift(info_fpath, sensor_maint)
   sensor_chars <- read_sensor_chars(info_fpath) %>%
     combine_chars_with_error(error_drift)
 
@@ -40,14 +40,13 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   # sensor_chars to be able to assign flags
   check_params_units(data_params_units, sensor_chars)
 
-  # TBD SOMEWHERE MAKE SURE THAT IT ALWAYS STARTS OUT READ AS CHAR?
-  data <- read_data(data_fpath, row_param_names, row_data_start) %>%
+  data <- read_data(data_fpath, row_param_names, row_data_start, data_params_units) %>%
     format_datetime(datetime_format, timezone)
 
   # Perform steps 2 (flag) and 3 (error) ---------------------------------------
 
   data <- data %>%
-    flag(sensor_chars, sensor_maint)
+    flag_and_error(sensor_chars, sensor_maint)
 
 
   # remove .x_Flag .x for dups eventually. Replace .. for spaces with spaces
