@@ -120,21 +120,30 @@ do_flag_4 <- function(data_poi, roc_threshold, time_small) {
 
   # In literature, flag data when their absolute deviation around the median
   # calculated over the last w previous values is larger than 3 times their median.
-  # If no ROC is given, use the equation used in the literature
+  # If no ROC is given, use the equation used in the literature.
+  # DOI: 10.4081/jlimnol.2021.2011
   if (is.na(roc_threshold)) {
-    data_poi$med <- lag(roll_median(unlist(data_poi[,2]),
-                                     n = 10, fill = NA, align = "right"))
 
     data_poi <- data_poi %>%
-      mutate(flag_4 = case_when(abs(med - .[[2]]) > 3*med ~ "B4",
-                                TRUE ~ ""),
-             # Flag the values on either side of the large roc
-             flag_4 = ifelse((lag(flag_4) == "B4" | lead(flag_4) == "B4"),
+      mutate(med = lag(roll_median(unlist(.[[2]]),
+                                   n = time_small, fill = NA, align = "right")),
+             abs_dev_from_med = abs(.[[2]] - med),
+             med_abs_dev_from_med = lag(roll_median(unlist(abs_dev_from_med),
+                                                    n = time_small, fill = NA,
+                                                    align = "right")),
+             flag_4 = ifelse(abs_dev_from_med > 3*med_abs_dev_from_med,
                              "B4",
                              ""),
-             # roll_median leaves NAs
-             flag_4 = ifelse(is.na(flag_4), "", flag_4)) %>%
-      select(-med)
+             flag_4 = case_when((lag(flag_4) == "B4" | lead(flag_4) == "B4")
+                                # Flag the values on either side of the large roc
+                                ~ "B4",
+                                # roll_median leaves NAs
+                                is.na(flag_4)
+                                ~ "",
+                                TRUE
+                                ~ flag_4)) %>%
+      select(-(med:med_abs_dev_from_med))
+
   } else {
     data_poi <- data_poi %>%
       mutate(diff = abs(.[[2]] - lag(.[[2]])),
@@ -166,7 +175,8 @@ do_flag_m_to_4 <- function(data_poi) {
                             flag_m == "M"  ~ flag_m,
                             flag_2 == "B2" ~ flag_2,
                             flag_3 == "B3" ~ flag_3,
-                            flag_4 == "B4" ~ flag_4))
+                            flag_4 == "B4" ~ flag_4,
+                            TRUE ~ ""))
 
 }
 
