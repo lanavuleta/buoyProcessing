@@ -54,7 +54,7 @@ check_params_units <- function(data_params_units, sensor_chars) {
 #'
 #' @inheritParams edit_error_drift
 #'
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter summarise group_by
 #' @importFrom magrittr "%>%"
 #'
 #' @export
@@ -71,6 +71,21 @@ check_error_drift <- function(error_drift) {
                "pre or post values filled in, the associated pre or post value",
                "is also expected to be filled in. The above rows do not fulfill",
                "this requirement. Edit accordingly and try again."),
+         call. = FALSE)
+  }
+
+  # Ensure there's just one row for each sensor checked for each date ----------
+  error_drift_dups <- error_drift %>%
+    group_by(sensor, unit, date, sensor_model, depth) %>%
+    summarise(n = n()) %>%
+    filter(n != 1)
+
+  if (nrow(error_drift_dups) != 0) {
+    print.data.frame(error_drift_dups %>% select(-n) %>% left_join(error_drift) %>%
+                       select(colnames(error_drift)))
+    stop(paste("Issue with the error drift sheet. Each sensor/date combination",
+               "should only exist once. The above rows do not fulfill this",
+               "requirement. Edit accordingly and try again."),
          call. = FALSE)
   }
 
