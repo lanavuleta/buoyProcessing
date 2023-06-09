@@ -7,15 +7,15 @@
 #'
 #' @return dataframe
 #' @export
-calculate_grade <- function(accuracy, error_info) {
+calculate_grade <- function(accuracy_val, error_info) {
 
   error_info <- error_info %>%
     arrange(end_datetime) %>%
     mutate(grade = case_when(is.na(error)        ~ NA,
-                             error <= accuracy   ~ "E",
-                             error <= accuracy*2 ~ "VG",
-                             error <= accuracy*4 ~ "G",
-                             error <= accuracy*6 ~ "F",
+                             error <= accuracy_val   ~ "E",
+                             error <= accuracy_val*2 ~ "VG",
+                             error <= accuracy_val*4 ~ "G",
+                             error <= accuracy_val*6 ~ "F",
                              TRUE                ~ "P"))
 
 }

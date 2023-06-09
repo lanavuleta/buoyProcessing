@@ -4,36 +4,17 @@
 \alias{handle_poi}
 \title{Title}
 \usage{
-handle_poi(
-  data_poi,
-  operating_range_min,
-  operating_range_max,
-  roc_threshold,
-  accuracy,
-  error_info,
-  parameter,
-  time_small,
-  time_large
-)
+handle_poi(input, time_small, time_large, combine_flags)
 }
 \arguments{
-\item{data_poi}{dataframe. Datetime column and parameter of interest column}
-
-\item{operating_range_min}{numeric. Operating range minimum}
-
-\item{operating_range_max}{numeric. Operating range maximum}
-
-\item{roc_threshold}{numeric. Maximum allowed rate of change}
-
-\item{accuracy}{numeric. Instrument accuracy}
-
-\item{error_info}{dataframe}
-
-\item{parameter}{string. Parameter name}
+\item{input}{list. data_poi and all the sensor_chars of interest}
 
 \item{time_small}{numeric. Number of rows that indicate a small time step}
 
 \item{time_large}{numeric. Number of rows that indicate a large time step}
+
+\item{combine_flags}{boolean. Should each flag be in a separate column or
+should they be combined into one column}
 }
 \value{
 dataframe

@@ -127,8 +127,10 @@ combine_chars_with_error <- function(sensor_chars, error_drift) {
 
   sensor_chars <- sensor_chars %>%
     match_chars_error(error_drift) %>%
-    select(sensor_header, unit, operating_range_min, operating_range_max,
-           roc_threshold, accuracy_val, calibration_type, sensor_model, depth,
+    select(sensor_header, unit, accuracy_val,
+           operating_range_min, operating_range_max,
+           roc_threshold, repeat_0s_max,
+           local_range_min, local_range_max,
            error_info) %>%
     mutate(unit = ifelse(unit == "none", NA, unit))
 

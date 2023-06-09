@@ -9,9 +9,13 @@ flag_poi(
   operating_range_min,
   operating_range_max,
   roc_threshold,
+  local_range_min,
+  local_range_max,
   time_small,
   time_large,
-  parameter
+  repeat_0s_max,
+  parameter,
+  combine_flags = FALSE
 )
 }
 \arguments{
@@ -23,11 +27,20 @@ flag_poi(
 
 \item{roc_threshold}{numeric. Maximum allowed rate of change}
 
+\item{local_range_min}{numeric. Operating range minimum}
+
+\item{local_range_max}{numeric. Operating range maximum}
+
 \item{time_small}{numeric. Number of rows that indicate a small time step}
 
 \item{time_large}{numeric. Number of rows that indicate a large time step}
 
+\item{repeat_0s_max}{numeric. Max allowable number of repeated 0s}
+
 \item{parameter}{string. Parameter name}
+
+\item{combine_flags}{boolean. Should each flag be in a separate column or
+should they be combined into one column}
 }
 \value{
 dataframe

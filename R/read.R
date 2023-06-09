@@ -127,9 +127,10 @@ read_sensor_chars <- function(info_fpath) {
   sensor_chars <- read_xlsx(info_fpath,
                             sheet = "sensor_characteristics")
 
-  cols_correct <- c("sensor_header", "unit",
+  cols_correct <- c("sensor_header", "unit", "accuracy",
                     "operating_range_min", "operating_range_max",
-                    "roc_threshold")
+                    "roc_threshold", "repeat_0s_max",
+                    "local_range_max", "local_range_min")
 
   if (any(!cols_correct %in% colnames(sensor_chars))) {
     stop(paste("Issue with the sensor characteristics sheet. Required column",
