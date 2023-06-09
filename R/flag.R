@@ -29,9 +29,11 @@ do_flag_x <- function(data, sensor_maint) {
 #'
 #' @return dataframe
 #' @export
-do_flag_1 <- function(data_poi, time_small, time_large) {
+do_flag_1 <- function(data_poi, time_small, time_large, repeat_0s_max) {
 
-  parameter <- colnames(data_poi)[2]
+  # Flag based on missing vals -------------------------------------------------
+  # If vals missing for short period of time OR
+  # there are few vals in large block of missing vals
 
   missing_chunks <- data.frame(unclass(rle(data_poi$flag_m))) %>%
     mutate(end_datetime_i   = cumsum(lengths),
@@ -40,24 +42,40 @@ do_flag_1 <- function(data_poi, time_small, time_large) {
            end_datetime   = data_poi$datetime[end_datetime_i],
            start_datetime = data_poi$datetime[start_datetime_i],
            flag_1 = "",
-           lengths = as.numeric(lengths)) %>%
+           # rle does not consistently return numeric
+           lengths = as.numeric(lengths),
+           values = as.numeric(values)) %>%
     select(-c(end_datetime_i, start_datetime_i)) %>%
-    missing_chunks_flag_1(time_small, time_large)
+    missing_chunks_flag_1(time_small, time_large) %>%
+    filter(flag_1 == "B1") %>%
+    select(start_datetime, end_datetime, flag_1)
 
+  # Flag based on repeat 0s ----------------------------------------------------
+  zeros <- data.frame(unclass(rle(data_poi[[2]]))) %>%
+    mutate(end_datetime_i   = cumsum(lengths),
+           start_datetime_i = case_when(row_number() == 1 ~ 1,
+                                        TRUE ~ lag(end_datetime_i)+1),
+           end_datetime   = data_poi$datetime[end_datetime_i],
+           start_datetime = data_poi$datetime[start_datetime_i],
+           flag_1z = "B1",
+           # rle does not consistently return numeric
+           lengths = as.numeric(lengths),
+           values = as.numeric(values)) %>%
+    filter(values == 0 & lengths >= repeat_0s_max) %>%
+    select(start_datetime, end_datetime, flag_1z)
+
+  # Apply flags for date ranges discovered above -------------------------------
   data_poi <- sqldf("SELECT * FROM data_poi
                  LEFT JOIN missing_chunks
                  ON data_poi.datetime >= missing_chunks.start_datetime AND
-                     data_poi.datetime <= missing_chunks.end_datetime") %>%
-    select(-(lengths:start_datetime))
-
-  if (grepl(parameter, "sp.*cond", ignore.case = TRUE) |
-      grepl(parameter, "pH", ignore.case = FALSE) |
-      grepl(parameter, "dissolved.*oxygen", ignore.case = TRUE) |
-      grepl(parameter, "DO", ignore.case = FALSE)) {
-    data_poi <- data_poi %>%
-      mutate(flag_1 = case_when(.[[2]] == 0 ~ "B1",
-                                TRUE ~ flag_1))
-  }
+                     data_poi.datetime <= missing_chunks.end_datetime
+                 LEFT JOIN zeros
+                 ON data_poi.datetime >= zeros.start_datetime AND
+                     data_poi.datetime <= zeros.end_datetime") %>%
+    select(-c(start_datetime, end_datetime)) %>%
+    mutate(flag_1 = case_when(flag_1z == "B1" | flag_1 == "B1" ~ "B1",
+                              TRUE ~ "")) %>%
+    select(-c(flag_1z))
 
   return(data_poi)
 
@@ -86,14 +104,14 @@ do_flag_2 <- function(data_poi, operating_range_min, operating_range_max) {
 #'
 #' @inheritParams flag_poi
 #'
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter pull
 #' @importFrom magrittr "%>%"
 #'
 #' @return dataframe
 #' @export
 do_flag_3 <- function(data_poi) {
 
-  ci <- calculate_99_ci(data_poi[,2])
+  ci <- calculate_99_ci(pull(data_poi, 2))
 
   local_range_min <- ci[[which(names(ci) == "bound_lower")]]
   local_range_max <- ci[[which(names(ci) == "bound_upper")]]
@@ -168,15 +186,23 @@ do_flag_4 <- function(data_poi, roc_threshold, time_small) {
 #'
 #' @return dataframe
 #' @export
-do_flag_m_to_4 <- function(data_poi) {
+do_flag_m_to_4 <- function(data_poi, combine_flags) {
 
-  data_poi <- data_poi %>%
-    mutate(flag = case_when(flag_1 == "B1" ~ flag_1,
-                            flag_m == "M"  ~ flag_m,
-                            flag_2 == "B2" ~ flag_2,
-                            flag_3 == "B3" ~ flag_3,
-                            flag_4 == "B4" ~ flag_4,
-                            TRUE ~ ""))
+  if (isFALSE(combine_flags)) {
+    data_poi <- data_poi %>%
+      mutate(flag = case_when(flag_1 == "B1" ~ flag_1,
+                              flag_m == "M"  ~ flag_m,
+                              flag_2 == "B2" ~ flag_2,
+                              flag_3 == "B3" ~ flag_3,
+                              flag_4 == "B4" ~ flag_4,
+                              TRUE ~ ""))
+  } else {
+    data_poi <- data_poi %>%
+      # TBD What we want flags to look like
+      mutate(flag_m = ifelse(flag_1 == "B1", "", "M"),
+             flag = paste0(flag_m, flag_1, flag_2, flag_3, flag_4,
+                                   sep = ""))
+  }
 
 }
 

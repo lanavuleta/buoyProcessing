@@ -4,10 +4,13 @@
 \alias{do_flag_m_to_4}
 \title{Calculate flag for parameter of interest (not including X flags)}
 \usage{
-do_flag_m_to_4(data_poi)
+do_flag_m_to_4(data_poi, combine_flags)
 }
 \arguments{
 \item{data_poi}{dataframe. Datetime column and parameter of interest column}
+
+\item{combine_flags}{boolean. Should each flag be in a separate column or
+should they be combined into one column}
 }
 \value{
 dataframe

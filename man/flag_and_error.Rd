@@ -4,7 +4,7 @@
 \alias{flag_and_error}
 \title{Title}
 \usage{
-flag_and_error(data, sensor_chars, sensor_maint)
+flag_and_error(data, sensor_chars, sensor_maint, combine_flags)
 }
 \arguments{
 \item{data}{dataframe. Output from read_data()}
@@ -12,6 +12,10 @@ flag_and_error(data, sensor_chars, sensor_maint)
 \item{sensor_chars}{dataframe. Output from read_sensor_chars()}
 
 \item{sensor_maint}{Output from read_sensor_maint()}
+
+\item{combine_flags}{boolean. TRUE results in an output with one flag column
+per sensor that contains all the flags assigned. FALSE results in each
+data column getting 6 associated flag columns (From flag_x to flag_4)}
 }
 \value{
 dataframe

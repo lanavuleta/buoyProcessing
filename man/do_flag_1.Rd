@@ -4,7 +4,7 @@
 \alias{do_flag_1}
 \title{Title}
 \usage{
-do_flag_1(data_poi, time_small, time_large)
+do_flag_1(data_poi, time_small, time_large, repeat_0s_max)
 }
 \arguments{
 \item{data_poi}{dataframe. Datetime column and parameter of interest column}
@@ -12,6 +12,8 @@ do_flag_1(data_poi, time_small, time_large)
 \item{time_small}{numeric. Number of rows that indicate a small time step}
 
 \item{time_large}{numeric. Number of rows that indicate a large time step}
+
+\item{repeat_0s_max}{numeric. Max allowable number of repeated 0s}
 }
 \value{
 dataframe
