@@ -54,7 +54,7 @@ check_params_units <- function(data_params_units, sensor_chars) {
 #'
 #' @inheritParams edit_error_drift
 #'
-#' @importFrom dplyr filter summarise group_by
+#' @importFrom dplyr filter summarise group_by n
 #' @importFrom magrittr "%>%"
 #'
 #' @export
@@ -146,8 +146,8 @@ check_chars_error_match <- function(sensor_chars, error_drift) {
     # Reorder to match the original error_drift file for better user understanding
     select(colnames(error_drift))
 
-  if (nrow(error_missing != 0)) {
-    print.data.frame(error_missing)
+  if (nrow(error_missing) != 0) {
+    print.data.frame(error_missing %>% select(-error_info))
     stop(paste("Issue with the error drift sheet. The above row(s) could not",
                "be matched with a parameter and unit from the buoy data.",
                "\nNote that the matching process checks if the phrase found in",
@@ -221,7 +221,7 @@ check_accuracy_for_grading <- function(sensor_chars) {
     rowwise() %>%
     filter(!is.null(unlist(error_info)) & is.na(accuracy_val))
 
-  if (nrow(missing_accuracy != 0)) {
+  if (nrow(missing_accuracy) != 0) {
     print.data.frame(missing_accuracy %>%
                        select(sensor_header:roc_threshold))
     stop(paste("Issue with sensor characteristics. Trying to calculate error and",
