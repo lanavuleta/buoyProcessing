@@ -129,7 +129,7 @@ flag_poi <- function(data_poi,
 
     do_flag_1(time_small, time_large, repeat_0s_max) %>%
     do_flag_2(operating_range_min, operating_range_max) %>%
-    do_flag_3() %>%
+    do_flag_3(local_range_min, local_range_max) %>%
     do_flag_4(roc_threshold, time_small) %>%
     do_flag_m_to_4(combine_flags) %>%
     select(datetime, 2, flag)

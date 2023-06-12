@@ -12,7 +12,8 @@ process_buoy(
   row_units = 3,
   datetime_format = "\%m-\%d-\%Y \%H:\%M:\%S",
   missing_vals = c("No Data", -1e+05, ""),
-  timezone = "America/Regina"
+  timezone = "America/Regina",
+  combine_flags = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,10 @@ process_buoy(
 \item{missing_vals}{string vector. Cell contents that indicate a missing value}
 
 \item{timezone}{string. Timezone of the data used. See options with OlsonNames()}
+
+\item{combine_flags}{boolean. TRUE results in an output with one flag column
+per sensor that contains all the flags assigned. FALSE results in each
+data column getting 6 associated flag columns (From flag_x to flag_4)}
 }
 \value{
 dataframe

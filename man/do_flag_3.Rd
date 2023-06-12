@@ -4,10 +4,14 @@
 \alias{do_flag_3}
 \title{Title}
 \usage{
-do_flag_3(data_poi)
+do_flag_3(data_poi, local_range_min, local_range_max)
 }
 \arguments{
 \item{data_poi}{dataframe. Datetime column and parameter of interest column}
+
+\item{local_range_min}{numeric. Operating range minimum}
+
+\item{local_range_max}{numeric. Operating range maximum}
 }
 \value{
 dataframe

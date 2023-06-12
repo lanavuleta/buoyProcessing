@@ -109,12 +109,7 @@ do_flag_2 <- function(data_poi, operating_range_min, operating_range_max) {
 #'
 #' @return dataframe
 #' @export
-do_flag_3 <- function(data_poi) {
-
-  ci <- calculate_99_ci(pull(data_poi, 2))
-
-  local_range_min <- ci[[which(names(ci) == "bound_lower")]]
-  local_range_max <- ci[[which(names(ci) == "bound_upper")]]
+do_flag_3 <- function(data_poi, local_range_min, local_range_max) {
 
   data_poi <- data_poi %>%
     mutate(flag_3 = case_when(.[[2]] <= local_range_min |
