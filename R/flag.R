@@ -43,8 +43,7 @@ do_flag_1 <- function(data_poi, time_small, time_large, repeat_0s_max) {
            start_datetime = data_poi$datetime[start_datetime_i],
            flag_1 = "",
            # rle does not consistently return numeric
-           lengths = as.numeric(lengths),
-           values = as.numeric(values)) %>%
+           lengths = as.numeric(lengths)) %>%
     select(-c(end_datetime_i, start_datetime_i)) %>%
     missing_chunks_flag_1(time_small, time_large) %>%
     filter(flag_1 == "B1") %>%
@@ -125,11 +124,12 @@ do_flag_3 <- function(data_poi, local_range_min, local_range_max) {
 #'
 #' @importFrom dplyr mutate select case_when lag lead
 #' @importFrom magrittr "%>%"
-#' @importFrom RcppRoll roll_median
+#' @importFrom roll roll_median
 #'
 #' @return dataframe
 #' @export
-do_flag_4 <- function(data_poi, roc_threshold, time_small) {
+do_flag_4 <- function(data_poi, roc_threshold, time_small, w = 100) {
+  # TBD change this w
 
   # In literature, flag data when their absolute deviation around the median
   # calculated over the last w previous values is larger than 3 times their median.
@@ -138,12 +138,9 @@ do_flag_4 <- function(data_poi, roc_threshold, time_small) {
   if (is.na(roc_threshold)) {
 
     data_poi <- data_poi %>%
-      mutate(med = lag(roll_median(unlist(.[[2]]),
-                                   n = time_small, fill = NA, align = "right")),
+      mutate(med = roll_median(.[[2]], width = w, min_obs = w/3),
              abs_dev_from_med = abs(.[[2]] - med),
-             med_abs_dev_from_med = lag(roll_median(unlist(abs_dev_from_med),
-                                                    n = time_small, fill = NA,
-                                                    align = "right")),
+             med_abs_dev_from_med = roll_median(abs_dev_from_med, width = w),
              flag_4 = ifelse(abs_dev_from_med > 3*med_abs_dev_from_med,
                              "B4",
                              ""),
@@ -194,7 +191,7 @@ do_flag_m_to_4 <- function(data_poi, combine_flags) {
   } else {
     data_poi <- data_poi %>%
       # TBD What we want flags to look like
-      mutate(flag_m = ifelse(flag_1 == "B1", "", "M"),
+      mutate(flag_m = ifelse(flag_1 == "B1", "", flag_m),
              flag = paste0(flag_m, flag_1, flag_2, flag_3, flag_4,
                                    sep = ""))
   }

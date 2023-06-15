@@ -12,15 +12,13 @@ RoxygenNote: 7.2.3
 Imports: 
     dplyr,
     fuzzyjoin,
-    janitor,
     lubridate,
     magrittr,
     purrr,
-    RcppRoll,
     readr,
     readxl,
+    roll,
     sqldf,
-    stats,
     stringr,
     tidyr
 URL: https://github.com/lanavuleta/buoyProcessing

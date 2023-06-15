@@ -4,7 +4,7 @@
 \alias{handle_poi}
 \title{Title}
 \usage{
-handle_poi(input, time_small, time_large, combine_flags)
+handle_poi(input, time_small, time_large, combine_flags, missing_vals)
 }
 \arguments{
 \item{input}{list. data_poi and all the sensor_chars of interest}
@@ -13,8 +13,11 @@ handle_poi(input, time_small, time_large, combine_flags)
 
 \item{time_large}{numeric. Number of rows that indicate a large time step}
 
-\item{combine_flags}{boolean. Should each flag be in a separate column or
-should they be combined into one column}
+\item{combine_flags}{boolean. TRUE results in an output with one flag column
+per sensor that contains all the flags assigned. FALSE results in each
+data column getting 6 associated flag columns (From flag_x to flag_4)}
+
+\item{missing_vals}{string vector. Cell contents that indicate a missing value}
 }
 \value{
 dataframe

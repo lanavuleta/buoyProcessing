@@ -8,6 +8,9 @@
 #' @param datetime_format string. Datetime format as would be used by as.Date()
 #' @param missing_vals string vector. Cell contents that indicate a missing value
 #' @param timezone string. Timezone of the data used. See options with OlsonNames()
+#' @param combine_flags boolean. TRUE results in an output with one flag column
+#'    per sensor that contains all the flags assigned. FALSE results in each
+#'    data column getting 6 associated flag columns (From flag_x to flag_4)
 #'
 #' @importFrom magrittr "%>%"
 #'
@@ -20,7 +23,12 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
                          row_units = 3,
                          datetime_format = "%m-%d-%Y %H:%M:%S",
                          missing_vals = c("No Data", -100000, ""),
-                         timezone = "America/Regina") {
+                         timezone = "America/Regina",
+                         combine_flags = TRUE) {
+
+  # Account for cells that are entirely empty (this case cannot be input by the
+  # GUI)
+  missing_vals <- c(missing_vals, "", NA)
 
   # Read in info from buoy_info ------------------------------------------------
   # Ensure sheets are done correctly such that process can continue as planned
@@ -46,7 +54,7 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   # Perform steps 2 (flag) and 3 (error) ---------------------------------------
 
   data <- data %>%
-    flag_and_error(sensor_chars, sensor_maint) %>%
+    flag_and_error(sensor_chars, sensor_maint, combine_flags, missing_vals) %>%
     handle_dup_names()
 
 }

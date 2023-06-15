@@ -11,7 +11,8 @@
 #'
 #' @return dataframe
 #' @export
-flag_and_error <- function(data, sensor_chars, sensor_maint, combine_flags) {
+flag_and_error <- function(data, sensor_chars, sensor_maint, combine_flags,
+                           missing_vals) {
 
   time_small <- get_flag_intervals(data)[1]
   time_large <- get_flag_intervals(data)[2]
@@ -33,7 +34,7 @@ flag_and_error <- function(data, sensor_chars, sensor_maint, combine_flags) {
 
   data_pois <- map_dfc(inputs,
                        handle_poi,
-                       time_small, time_large, combine_flags)
+                       time_small, time_large, combine_flags, missing_vals)
   #append(data_pois, as.list(sc_t))
 
   data <- data %>%
@@ -50,7 +51,7 @@ flag_and_error <- function(data, sensor_chars, sensor_maint, combine_flags) {
 #' @param sensor_chars_poi list. Sensor chars of interest associated with the
 #'    parameter of interest
 #'
-#' @importFrom tidyr (data_poi)
+#' @importFrom tidyr nest
 #'
 #' @return list
 #' @export
@@ -68,13 +69,12 @@ prep_input <- function(data_poi, sensor_chars_poi) {
 #' @param input list. data_poi and all the sensor_chars of interest
 #' @param time_small numeric. Number of rows that indicate a small time step
 #' @param time_large numeric. Number of rows that indicate a large time step
-#' @param combine_flags boolean. Should each flag be in a separate column or
-#'    should they be combined into one column
+#' @inheritParams flag_and_error
 #'
 #' @return dataframe
 #' @export
 handle_poi <- function(input,
-                       time_small, time_large, combine_flags) {
+                       time_small, time_large, combine_flags, missing_vals) {
 
   data_poi <- input$data_poi[[1]] %>% # data is stored in a list within the input list
     flag_poi(input$operating_range_min, input$operating_range_max,
@@ -83,7 +83,7 @@ handle_poi <- function(input,
              time_small, time_large,
              input$repeat_0s_max,
              input$parameter,
-             combine_flags) %>%
+             combine_flags, missing_vals) %>%
     error_poi(input$accuracy_val, input$error_info[[1]],
               input$parameter) %>%
     select(-(datetime))
@@ -120,7 +120,7 @@ flag_poi <- function(data_poi,
                      time_small, time_large,
                      repeat_0s_max,
                      parameter,
-                     combine_flags = FALSE) {
+                     combine_flags = FALSE, missing_vals) {
 
   data_poi <- data_poi %>%
     mutate(flag_m = case_when(.[[2]] %in% missing_vals ~ "M",

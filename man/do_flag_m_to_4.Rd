@@ -9,8 +9,9 @@ do_flag_m_to_4(data_poi, combine_flags)
 \arguments{
 \item{data_poi}{dataframe. Datetime column and parameter of interest column}
 
-\item{combine_flags}{boolean. Should each flag be in a separate column or
-should they be combined into one column}
+\item{combine_flags}{boolean. TRUE results in an output with one flag column
+per sensor that contains all the flags assigned. FALSE results in each
+data column getting 6 associated flag columns (From flag_x to flag_4)}
 }
 \value{
 dataframe

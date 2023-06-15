@@ -13,7 +13,7 @@ process_buoy(
   datetime_format = "\%m-\%d-\%Y \%H:\%M:\%S",
   missing_vals = c("No Data", -1e+05, ""),
   timezone = "America/Regina",
-  combine_flags = FALSE
+  combine_flags = TRUE
 )
 }
 \arguments{

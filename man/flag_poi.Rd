@@ -15,7 +15,8 @@ flag_poi(
   time_large,
   repeat_0s_max,
   parameter,
-  combine_flags = FALSE
+  combine_flags = FALSE,
+  missing_vals
 )
 }
 \arguments{
@@ -39,8 +40,11 @@ flag_poi(
 
 \item{parameter}{string. Parameter name}
 
-\item{combine_flags}{boolean. Should each flag be in a separate column or
-should they be combined into one column}
+\item{combine_flags}{boolean. TRUE results in an output with one flag column
+per sensor that contains all the flags assigned. FALSE results in each
+data column getting 6 associated flag columns (From flag_x to flag_4)}
+
+\item{missing_vals}{string vector. Cell contents that indicate a missing value}
 }
 \value{
 dataframe
