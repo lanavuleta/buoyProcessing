@@ -124,46 +124,27 @@ do_flag_3 <- function(data_poi, local_range_min, local_range_max) {
 #'
 #' @importFrom dplyr mutate select case_when lag lead
 #' @importFrom magrittr "%>%"
-#' @importFrom roll roll_median
+#' @importFrom forecast tsoutliers
 #'
 #' @return dataframe
 #' @export
-do_flag_4 <- function(data_poi, roc_threshold, time_small, w = 100) {
-  # TBD change this w
+do_flag_4 <- function(data_poi, roc_threshold, time_small) {
 
-  # In literature, flag data when their absolute deviation around the median
-  # calculated over the last w previous values is larger than 3 times their median.
-  # If no ROC is given, use the equation used in the literature.
-  # DOI: 10.4081/jlimnol.2021.2011
-  if (is.na(roc_threshold)) {
+  # Check if ROC as defined by user is surpassed -------------------------------
+  data_poi <- data_poi %>%
+    mutate(diff = abs(.[[2]] - lag(.[[2]])),
+           flag_4 = case_when((
+             diff   >= roc_threshold |
+               # Flag the values on either side of the large roc
+               lag(diff)  >= roc_threshold |
+               lead(diff) >= roc_threshold)
+             ~ "B4",
+           TRUE
+             ~ "")) %>%
+    select(-diff)
 
-    data_poi <- data_poi %>%
-      mutate(med = roll_median(.[[2]], width = w, min_obs = w/3),
-             abs_dev_from_med = abs(.[[2]] - med),
-             med_abs_dev_from_med = roll_median(abs_dev_from_med, width = w),
-             flag_4 = ifelse(abs_dev_from_med > 3*med_abs_dev_from_med,
-                             "B4",
-                             ""),
-             flag_4 = case_when((lag(flag_4) == "B4" | lead(flag_4) == "B4")
-                                # Flag the values on either side of the large roc
-                                ~ "B4",
-                                # roll_median leaves NAs
-                                is.na(flag_4)
-                                ~ "",
-                                TRUE
-                                ~ flag_4)) %>%
-      select(-(med:med_abs_dev_from_med))
-
-  } else {
-    data_poi <- data_poi %>%
-      mutate(diff = abs(.[[2]] - lag(.[[2]])),
-             flag_4 = case_when((    diff   >= roc_threshold |
-                                 # Flag the values on either side of the large roc
-                                 lag(diff)  >= roc_threshold |
-                                 lead(diff) >= roc_threshold) ~ "B4",
-                                TRUE ~ "")) %>%
-      select(-diff)
-  }
+  # Flag outliers as identified by tsoutliers() --------------------------------
+  data_poi$flag_4[tsoutliers(pull(data_poi, 2))$index] <- "B4"
 
   return(data_poi)
 

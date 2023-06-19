@@ -4,7 +4,7 @@
 \alias{do_flag_4}
 \title{Title}
 \usage{
-do_flag_4(data_poi, roc_threshold, time_small, w = 100)
+do_flag_4(data_poi, roc_threshold, time_small)
 }
 \arguments{
 \item{data_poi}{dataframe. Datetime column and parameter of interest column}
