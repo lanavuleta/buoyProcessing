@@ -46,7 +46,7 @@ do_flag_1 <- function(data_poi, time_small, time_large, repeat_0s_max) {
            lengths = as.numeric(lengths)) %>%
     select(-c(end_datetime_i, start_datetime_i)) %>%
     missing_chunks_flag_1(time_small, time_large) %>%
-    filter(flag_1 == "B1") %>%
+    filter(flag_1 == "1") %>%
     select(start_datetime, end_datetime, flag_1)
 
   # Flag based on repeat 0s ----------------------------------------------------
@@ -56,7 +56,7 @@ do_flag_1 <- function(data_poi, time_small, time_large, repeat_0s_max) {
                                         TRUE ~ lag(end_datetime_i)+1),
            end_datetime   = data_poi$datetime[end_datetime_i],
            start_datetime = data_poi$datetime[start_datetime_i],
-           flag_1z = "B1",
+           flag_1z = "1",
            # rle does not consistently return numeric
            lengths = as.numeric(lengths),
            values = as.numeric(values)) %>%
@@ -72,8 +72,8 @@ do_flag_1 <- function(data_poi, time_small, time_large, repeat_0s_max) {
                  ON data_poi.datetime >= zeros.start_datetime AND
                      data_poi.datetime <= zeros.end_datetime") %>%
     select(-c(start_datetime, end_datetime)) %>%
-    mutate(flag_1 = case_when(flag_1z == "B1" | flag_1 == "B1" ~ "B1",
-                              TRUE ~ "")) %>%
+    mutate(flag_1 = case_when(flag_1z == "1" | flag_1 == "1" ~ "1",
+                              TRUE ~ NA_character_)) %>%
     select(-c(flag_1z))
 
   return(data_poi)
@@ -94,8 +94,8 @@ do_flag_2 <- function(data_poi, operating_range_min, operating_range_max) {
   data_poi <- data_poi %>%
     mutate(flag_2 = case_when(.[[2]] <= operating_range_min |
                                 .[[2]] >= operating_range_max
-                              ~ "B2",
-                              TRUE ~ ""))
+                              ~ "2",
+                              TRUE ~ NA_character_))
 
 }
 
@@ -113,8 +113,8 @@ do_flag_3 <- function(data_poi, local_range_min, local_range_max) {
   data_poi <- data_poi %>%
     mutate(flag_3 = case_when(.[[2]] <= local_range_min |
                                 .[[2]] >= local_range_max
-                              ~ "B3",
-                              TRUE ~ ""))
+                              ~ "3",
+                              TRUE ~ NA_character_))
 
 }
 
@@ -138,13 +138,13 @@ do_flag_4 <- function(data_poi, roc_threshold, time_small) {
                # Flag the values on either side of the large roc
                lag(diff)  >= roc_threshold |
                lead(diff) >= roc_threshold)
-             ~ "B4",
+             ~ "4",
            TRUE
-             ~ "")) %>%
+             ~ NA_character_)) %>%
     select(-diff)
 
   # Flag outliers as identified by tsoutliers() --------------------------------
-  data_poi$flag_4[tsoutliers(pull(data_poi, 2))$index] <- "B4"
+  data_poi$flag_4[tsoutliers(pull(data_poi, 2))$index] <- "4"
 
   return(data_poi)
 
@@ -156,25 +156,30 @@ do_flag_4 <- function(data_poi, roc_threshold, time_small) {
 #'
 #' @importFrom dplyr mutate case_when
 #' @importFrom magrittr "%>%"
+#' @importFrom tidyr unite
 #'
 #' @return dataframe
 #' @export
 do_flag_m_to_4 <- function(data_poi, combine_flags) {
 
+  # flag_m would've been set to "" instead of NA_character_. Now we set to NA
+  data_poi <- data_poi %>%
+    mutate(flag_m = ifelse(flag_m == "", NA_character_, flag_m))
+
   if (isFALSE(combine_flags)) {
     data_poi <- data_poi %>%
-      mutate(flag = case_when(flag_1 == "B1" ~ flag_1,
+      mutate(flag = case_when(flag_1 == "1" ~ flag_1,
                               flag_m == "M"  ~ flag_m,
-                              flag_2 == "B2" ~ flag_2,
-                              flag_3 == "B3" ~ flag_3,
-                              flag_4 == "B4" ~ flag_4,
-                              TRUE ~ ""))
+                              flag_2 == "2" ~ flag_2,
+                              flag_3 == "3" ~ flag_3,
+                              flag_4 == "4" ~ flag_4,
+                              TRUE ~ NA_character_))
   } else {
     data_poi <- data_poi %>%
       # TBD What we want flags to look like
-      mutate(flag_m = ifelse(flag_1 == "B1", "", flag_m),
-             flag = paste0(flag_m, flag_1, flag_2, flag_3, flag_4,
-                                   sep = ""))
+      # All "" set to na for na.rm to work in unite() below
+      mutate(flag_m = ifelse(!is.na(flag_1) | flag_m == "", NA_character_, flag_m)) %>%
+      unite("flag", flag_m:flag_4, remove = TRUE, na.rm = TRUE, sep = ",")
   }
 
 }
@@ -212,7 +217,7 @@ missing_chunks_flag_1 <- function(missing_chunks, time_small, time_large) {
   for (i in 1:nrow(missing_chunks)) {
     # Check for values missing for short period of time
     if (missing_chunks$values[i] == "M" & missing_chunks$lengths[i] <= time_small) {
-      missing_chunks$flag_1[i] <- "B1"
+      missing_chunks$flag_1[i] <- "1"
     }
     # Check for few values recorded in a large block of missing values
     if (missing_chunks$values[i] == "" & missing_chunks$lengths[i] <= time_small &
@@ -225,7 +230,7 @@ missing_chunks_flag_1 <- function(missing_chunks, time_small, time_large) {
             (lag(missing_chunks)$lengths[i] >= time_large &
              lag(missing_chunks)$values[i] == "M"),
             na.rm = TRUE)) {
-      missing_chunks$flag_1[i] <- "B1"
+      missing_chunks$flag_1[i] <- "1"
     }
   }
 
