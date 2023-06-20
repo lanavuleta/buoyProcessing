@@ -13,12 +13,12 @@ Imports:
     dplyr,
     forecast,
     fuzzyjoin,
+    ggplot2,
     lubridate,
     magrittr,
     purrr,
     readr,
     readxl,
-    roll,
     sqldf,
     stringr,
     tidyr

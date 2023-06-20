@@ -32,17 +32,32 @@ flag_and_error <- function(data, sensor_chars, sensor_maint, combine_flags,
 
   inputs <- map2(data_pois, sensor_chars_listed, prep_input)
 
-  data_pois <- map_dfc(inputs,
-                       handle_poi,
-                       time_small, time_large, combine_flags, missing_vals)
-  #append(data_pois, as.list(sc_t))
+  data_pois <- map(inputs,
+                   handle_poi,
+                   time_small, time_large, combine_flags, missing_vals)
 
-  data <- data %>%
-    select(datetime, flag_x) %>%
-    cbind(data_pois) %>%
+  data_flagx <- select(data, datetime, flag_x)
+
+  data_pois <- map(data_pois,
+                   finalize_poi,
+                   data_flagx)
+
+}
+
+#' Title
+#'
+#' @param data_poi dataframe. Output from handle_poi()
+#' @param data_flagx dataframe. The complete datetime and flag_x columns
+#'
+#' @importFrom dplyr left_join select
+#'
+#' @return dataframe
+#' @export
+finalize_poi <- function(data_poi, data_flagx) {
+  data_poi <- data_poi %>%
+    left_join(data_flagx, by = "datetime") %>%
     do_flag_final() %>%
     select(-flag_x)
-
 }
 
 #' Title
@@ -85,12 +100,11 @@ handle_poi <- function(input,
              input$parameter,
              combine_flags, missing_vals) %>%
     error_poi(input$accuracy_val, input$error_info[[1]],
-              input$parameter) %>%
-    select(-(datetime))
+              input$parameter)
 
   # Use name from sensor_chars because if two columns from buoy data have the
   # same name, R will change the column name
-  colnames(data_poi)[1] <- paste(input$parameter)
+  colnames(data_poi)[2] <- paste(input$parameter)
 
   return(data_poi)
 

@@ -54,8 +54,8 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   # Perform steps 2 (flag) and 3 (error) ---------------------------------------
 
   data <- data %>%
-    flag_and_error(sensor_chars, sensor_maint, combine_flags, missing_vals) %>%
-    handle_dup_names()
+    flag_and_error(sensor_chars, sensor_maint, combine_flags, missing_vals)# %>%
+    #handle_dup_names()
 
 }
 
