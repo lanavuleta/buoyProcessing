@@ -71,7 +71,7 @@ read_sensor_maint <- function(info_fpath, timezone) {
   sensor_maint <- read_xlsx(info_fpath,
                             sheet = "sensor_maintenance")
 
-  cols_correct <- c("start_date",	"start_time",	"end_date",	"end_time",	"flag")
+  cols_correct <- c("start_datetime",	"end_datetime",	"flag")
 
   if (any(!cols_correct %in% colnames(sensor_maint))) {
     stop(paste("Issue with the sensor maintenance sheet. Required column",

@@ -12,26 +12,18 @@
 edit_sensor_maint <- function(sensor_maint, timezone) {
 
   sensor_maint <- sensor_maint %>%
-    mutate(start_datetime = ISOdate(year(sensor_maint$start_date),
-                                    month(sensor_maint$start_date),
-                                    day(sensor_maint$start_date),
-                                    # Done like this because excel times are
-                                    # read in with an undesired dummy date
-                                    hour(sensor_maint$start_time),
-                                    minute(sensor_maint$start_time),
-                                    tz = timezone)
+    mutate(start_datetime = as.POSIXct(start_datetime,
+                                       tryFormats = c("%Y-%m-%d %H:%M",
+                                                      "%Y-%m-%d %H:%M:%S"),
+                                       tz = timezone)
            # Will flag X an additional 10 min before the
            # end of the maintenance to allow parameters
            # to settle
            - minutes(10),
-           end_datetime   = ISOdate(year(sensor_maint$end_date),
-                                    month(sensor_maint$end_date),
-                                    day(sensor_maint$end_date),
-                                    # Done like this because excel times are
-                                    # read in with an undesired dummy date
-                                    hour(sensor_maint$end_time),
-                                    minute(sensor_maint$end_time),
-                                    tz = timezone)
+           end_datetime   = as.POSIXct(end_datetime,
+                                       tryFormats = c("%Y-%m-%d %H:%M",
+                                                      "%Y-%m-%d %H:%M:%S"),
+                                       tz = timezone)
            # Will flag X an additional 30 min after the
            # end of the maintenance to allow parameters
            # to settle
