@@ -5,9 +5,9 @@
 #' @param sensor_maint Output from read_sensor_maint()
 #' @inheritParams process_buoy
 #'
-#' @importFrom purrr map map2 map_dfc
+#' @importFrom purrr map map2
 #' @importFrom magrittr "%>%"
-#' @importFrom dplyr select all_of
+#' @importFrom dplyr select all_of rename
 #'
 #' @return dataframe
 #' @export

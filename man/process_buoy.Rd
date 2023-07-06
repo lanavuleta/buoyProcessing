@@ -38,7 +38,7 @@ per sensor that contains all the flags assigned. FALSE results in each
 data column getting 6 associated flag columns (From flag_x to flag_4)}
 }
 \value{
-dataframe
+list of dataframes output by flag_and_error()
 }
 \description{
 Title

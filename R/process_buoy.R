@@ -14,7 +14,7 @@
 #'
 #' @importFrom magrittr "%>%"
 #'
-#' @return dataframe
+#' @return list of dataframes output by flag_and_error()
 #' @export
 process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
                          data_fpath = "data/input/BP_SuperBuoy_Data2022.csv",
@@ -57,5 +57,18 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
     flag_and_error(sensor_chars, sensor_maint, combine_flags, missing_vals)# %>%
     #handle_dup_names()
 
+}
+
+#' Title
+#'
+#' @param data list of dataframes. Output from process_buoy()
+#'
+#' @importFrom purrr reduce
+#' @importFrom dplyr full_join
+#'
+#' @return dataframe. All buoy data in one single dataframe
+#' @export
+combine_buoy <- function(data) {
+  data_all <- reduce(data, full_join, by = "datetime")
 }
 
