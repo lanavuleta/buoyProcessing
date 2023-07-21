@@ -70,5 +70,18 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
 #' @export
 combine_buoy <- function(data) {
   data_all <- reduce(data, full_join, by = "datetime")
+
+  # reduce() can add ".x" or ".y"s to column names if they are duplicates. This
+  # is undesirable
+
+  for (i in 1:ncol(data_all)) {
+    # Depending on the number of repeat colnames, reduce() will keep adding
+    # ".x" or ".y"s to column names, such that there might be multiple at the end
+    # of a colname
+    colnames(data_all)[i] <- sub("(\\.[xy])+", "", colnames(data_all)[i])
+  }
+
+  return(data_all)
+
 }
 
