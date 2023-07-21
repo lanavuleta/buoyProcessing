@@ -99,12 +99,12 @@ read_error_drift <- function(info_fpath, sensor_maint) {
   error_drift <- read_xlsx(info_fpath,
                            sheet = "error_drift")
 
-  cols_correct <- c("sensor", "calibration_type", "unit", "date",
-                    "sensor_model",	"depth", "pre_calibration",
-                    "post_calibration", "pre_clean", "post_clean")
+  cols_correct <- c("sensor_header", "unit", "date",
+                    "pre_calibration", "post_calibration",
+                    "pre_clean", "post_clean")
 
   if (any(!cols_correct %in% colnames(error_drift))) {
-    stop(paste("Issue with the sensor characteristics sheet. Required column",
+    stop(paste("Issue with the sensor error drift sheet. Required column",
                "names are:", paste(cols_correct, collapse = ", "), ". One or",
                "more required column is missing.\nEdit accordingly and try again."))
   }
@@ -142,4 +142,75 @@ read_sensor_chars <- function(info_fpath) {
 
   return(sensor_chars)
 
+}
+
+#' Title
+#'
+#' @param data_qcd_fpath string. Path to QCd data csv
+#'
+#' @importFrom readr read_csv
+#'
+#' @return dataframe, as was output by combine_buoy()
+#' @export
+read_data_qcd <- function(data_qcd_fpath) {
+  data_qcd <- read_csv(data_qcd_fpath, name_repair = "minimal")
+}
+
+#' Title
+#'
+#' @param data_qcd dataframe. Output from read_data_qcd()
+#'
+#' @importFrom purrr map2
+#'
+#' @return list of dataframes, as was output by process_buoy()
+#' @export
+split_data_qcd <- function(data_qcd) {
+  start_cols <- NULL
+  end_cols <- NULL
+
+  i <- 2
+
+  while (i <= ncol(data_qcd)) {
+    start_cols <- c(start_cols, i)
+
+    parameter <- colnames(data_qcd)[i]
+
+    # We know that the column at i+1 is the Flag col, but don't know if the column
+    # at i+2 is the Error col or the next parameter
+    if (grepl(paste0(parameter, "_Error"), colnames(data_qcd)[i+2])) {
+      end_col <- i+2
+    } else {
+      end_col <- i+1
+    }
+
+    end_cols <- c(end_cols, end_col)
+
+    i <- end_col + 1
+  }
+
+  data_qcd_pois <- map2(start_cols, end_cols, split_data, data_qcd)
+}
+
+#' Title
+#'
+#' @param start_col numeric. Column at which poi data begins
+#' @param end_col numeric. Column at which poi data ends
+#' @param data_qcd dataframe. QCd data
+#'
+#' @importFrom dplyr select all_of
+#'
+#' @return dataframe. The columns of interest for a specified parameter
+#' @export
+split_data <- function(start_col, end_col, data_qcd) {
+  # If the sensor is a duplicate name (ex there are two sensors named
+  # "Underwater PAR"), R will add a differentiating character to the end of the
+  # column when reading in the csv. This must be removed
+
+  data_poi <- select(data_qcd, all_of(c(1, start_col:end_col)))
+
+  #if (grepl("_Flag.*", colnames(data_poi)[3])) {
+  #  # The characters used by R to differentiate between duplicates
+  #  differentiator <- sub("_Flag", "", str_extract(colnames(data_poi)[3],
+  #                                                 "_Flag(.*)"))
+  #}
 }
