@@ -45,6 +45,9 @@ edit_plot_data <- function(data_poi) {
                           TRUE ~ .)) %>%
     mutate_at(vars(matches("_Flag")),
               ~ factor(., levels = flags)) %>%
+    # Particularly relevant when reading in QCd data - R might not realize that
+    # the column is a datetime
+    mutate(datetime = as.POSIXct(datetime)) %>%
     # To make plotting easier (cannot plot based on column index, and names will
     # change from parameter to parameter)
     rename(values = 2, flag = 3)
