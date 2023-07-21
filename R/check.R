@@ -76,7 +76,7 @@ check_error_drift <- function(error_drift) {
 
   # Ensure there's just one row for each sensor checked for each date ----------
   error_drift_dups <- error_drift %>%
-    group_by(sensor, unit, date, sensor_model, depth) %>%
+    group_by(sensor_header, unit, date) %>%
     summarise(n = n()) %>%
     filter(n != 1)
 
@@ -106,12 +106,7 @@ check_sensor_chars <- function(sensor_chars) {
     rowwise() %>%
     mutate(accuracy_issues = ifelse(is.na(accuracy),
                                     NA,
-                                    case_when(is.na(unit)
-                                              ~ !grepl(paste0("+/- ?\\d+\\.?\\d*.*"),
-                                                       accuracy),
-                                              TRUE
-                                              ~ !grepl(paste0("+/- ?\\d+\\.?\\d* *(", unit, ").*"),
-                                                       accuracy)))) %>%
+                                    get_accuracy_units(accuracy, unit))) %>%
     filter(isTRUE(accuracy_issues)) %>%
     select(-accuracy_issues)
 
@@ -120,10 +115,36 @@ check_sensor_chars <- function(sensor_chars) {
     stop(paste("Issue with the sensor characteristics sheet. Expected values in",
                "the accuracy column look like '+/- VALUE UNIT', where VALUE is",
                "some numeric value, and UNIT matches the unit listed in the",
-               "unit column.",
+               "unit column OR '+/- VALUE %', where VALUE is some numeric value.",
+               "\nIf unknown, the accuracy should be left blank.",
                "\nEdit the sensor characteristics sheet accordingly and try again."))
   }
 
+}
+
+#' Title
+#'
+#' @param accuracy string. Accuracy from sensor_chars row
+#' @param unit string. Characters remaining after the "+/- x.xx" is extracted
+#'
+#' @return boolean. TRUE if accuracy input is incorrect, FALSE otherwise
+#' @export
+get_accuracy_units <- function(accuracy, unit) {
+  accuracy_unit <- str_match(accuracy, "\\+/-\\s*\\d+\\.?\\d*(.*)")[,2]
+
+  accuracy_issues <- FALSE
+
+  # Make paste0 easier with an NA unit
+  if (is.na(unit)) {
+    unit <- ""
+  }
+
+  if (!grepl(paste0("^\\s*", unit, "\\s*$"), accuracy_unit) &
+      !grepl("^\\s*%\\s*$", accuracy_unit)) {
+    accuracy_issues <- TRUE
+  }
+
+  return(accuracy_issues)
 }
 
 #' Title
@@ -139,8 +160,10 @@ check_sensor_chars <- function(sensor_chars) {
 check_chars_error_match <- function(sensor_chars, error_drift) {
 
   error_missing <- regex_join(sensor_chars, error_drift,
-                              by = c("sensor_header" = "sensor", "unit"),
+                              by = c("sensor_header", "unit"),
                               mode = "right") %>%
+    mutate(unit = unit.y,
+           sensor_header = sensor_header.y) %>%
     filter(is.na(sensor_header)) %>%
     mutate(unit = unit.y) %>%
     # Reorder to match the original error_drift file for better user understanding
@@ -157,24 +180,6 @@ check_chars_error_match <- function(sensor_chars, error_drift) {
                "'Deep_pH' and 'Shallow_pH' buoy parameters.",
                "\nEdit the error drift sheet and try again."),
          call. = FALSE)
-  } else {
-    matches_chars_error <- match_chars_error(sensor_chars, error_drift)
-
-    print.data.frame(matches_chars_error %>%
-                       select(sensor_chars_param = sensor_header,
-                              error_drift_param = sensor,
-                              unit) %>%
-                       filter(!is.na(error_drift_param)))
-    message(paste("Check the above table before proceeding. These are the matches",
-                  "between the error drift sheet and the available parameters in",
-                  "the buoy data identified by the tool.",
-                  "\nAre these correct? If not, edit the sensor names in the",
-                  "error drift sheet.",
-                  "\nNote that the matching process checks if the phrase found in",
-                  "the 'sensor' column of the error drift is in any of the",
-                  "parameter names from the buoy data sheet. That means that an",
-                  "error reading with sensor 'pH' would be matched with the",
-                  "'Deep_pH' and 'Shallow_pH' buoy parameters."))
   }
 }
 
