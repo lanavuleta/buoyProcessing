@@ -239,3 +239,66 @@ check_accuracy_for_grading <- function(sensor_chars) {
   }
 
 }
+
+#' Title
+#'
+#' @param input dataframe. The input whose column classes are to be checked
+#' @param input_name string. The name of the input being checked
+#' @param classes_correct character list. The correct classes for the columns of interest
+#' @param cols_correct character list. The names of the columns to check
+#'
+#' @importFrom dplyr filter left_join mutate
+#' @importFrom tidyr pivot_longer everything
+#'
+#' @return character list. The columns that were entered incorrectly
+#' @export
+check_input_class <- function(input, input_name, classes_correct, cols_correct) {
+
+  classes_correct <- data.frame(colname = cols_correct, type_correct = classes_correct)
+
+  # Use as.list because datetime have 2 types (POSIXct, POSIXt) and any datetimes
+  # alter the shape of the dataframe. as.list() ensures that the structure is
+  # consistent with or without datetimes
+  classes_input <- as.data.frame(as.list(sapply(input, class)))[1,] %>%
+    pivot_longer(cols = everything(), names_to = "colname", values_to = "type_actual") %>%
+    filter(colname %in% classes_correct$colname)
+
+  classes_issue <- left_join(classes_correct, classes_input, by = "colname") %>%
+    filter(type_correct != type_actual) %>%
+    mutate(type_correct = ifelse(type_correct == "POSIXct", ""))
+
+  if (nrow(classes_issue) != 0) {
+    print.data.frame(classes_issue)
+    stop(paste("Issue with", input_name, "\nThe values input in the above",
+               "columns were not the expected type.\nNote: a",
+               "column that should be numeric can only contain digits and no",
+               "special characters or letters, such as '<' or any text.",
+               "\nNote: a column that should be a date or a datetime should follow",
+               "a consistent format and be easily identifiable as a date or datetime.",
+               "You can follow the following format for a date: 'YYYY-mm-dd', and",
+               "the following format for a datetime: 'YYYY-mm-dd HH:MM:SS'"),
+         paste("\nEdit accordingly and try again."),
+         call. = FALSE)
+  }
+
+}
+
+# Checking column input validity -----------------------------------------------
+
+#' Title
+#'
+#' @param flags character string. The flags set by the user in the sensor_maint sheet
+#'
+#' @return error message if flags were not properly assigned
+check_flags <- function(flags) {
+
+  flags_expected <- c("X1", "X2", "X3")
+
+  if (any(!flags %in% flags_expected)) {
+    stop(paste("Issue with the flags in Sensor Maintenance", "\nThe acceptable",
+               "flags are: X1, X2, X3.", "\nEdit accordingly and try again."))
+  }
+
+}
+
+check_accuracy <- function(accuracy, unit) {}

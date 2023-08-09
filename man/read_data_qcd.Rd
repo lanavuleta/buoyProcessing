@@ -10,7 +10,7 @@ read_data_qcd(data_qcd_fpath)
 \item{data_qcd_fpath}{string. Path to QCd data csv}
 }
 \value{
-list of dataframes, as was output by process_buoy()
+dataframe, as was output by combine_buoy()
 }
 \description{
 Title

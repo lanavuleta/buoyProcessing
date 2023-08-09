@@ -79,6 +79,12 @@ read_sensor_maint <- function(info_fpath, timezone) {
                "more required column is missing.\nEdit accordingly and try again."))
   }
 
+  check_input_class(sensor_maint,
+                    "Sensor Maintenance",
+                    c("POSIXct", "POSIXct", "character"),
+                    cols_correct)
+  check_flags(sensor_maint$flag)
+
   sensor_maint <- edit_sensor_maint(sensor_maint, timezone)
 
   return(sensor_maint)
@@ -109,6 +115,12 @@ read_error_drift <- function(info_fpath, sensor_maint) {
                "more required column is missing.\nEdit accordingly and try again."))
   }
 
+  check_input_class(error_drift,
+                    "Error Drift",
+                    c("character", "character", "POSIXct",
+                      "numeric", "numeric", "numeric", "numeric"),
+                    cols_correct)
+
   error_drift <- edit_error_drift(error_drift, sensor_maint)
 
   return(error_drift)
@@ -137,6 +149,12 @@ read_sensor_chars <- function(info_fpath) {
                "names are:", paste(cols_correct, collapse = ", "), ". One or",
                "more required column is missing.\nEdit accordingly and try again."))
   }
+
+  check_input_class(sensor_chars,
+                    "Sensor Characteristics",
+                    c("character", "character", "character",
+                      "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"),
+                    cols_correct)
 
   sensor_chars <- edit_sensor_chars(sensor_chars)
 
