@@ -14,7 +14,11 @@ edit_sensor_maint <- function(sensor_maint, timezone) {
   sensor_maint <- sensor_maint %>%
     mutate(start_datetime = as.POSIXct(start_datetime,
                                        tryFormats = c("%Y-%m-%d %H:%M",
-                                                      "%Y-%m-%d %H:%M:%S"),
+                                                      "%Y-%m-%d %H:%M:%S",
+                                                      "%Y-%m-%d %I:%M %p",
+                                                      "%Y-%m-%d %I:%M:%S %p",
+                                                      "%Y-%m-%d %I:%M %P",
+                                                      "%Y-%m-%d %I:%M:%S %P"),
                                        tz = timezone)
            # Will flag X an additional 10 min before the
            # end of the maintenance to allow parameters
@@ -22,7 +26,11 @@ edit_sensor_maint <- function(sensor_maint, timezone) {
            - minutes(10),
            end_datetime   = as.POSIXct(end_datetime,
                                        tryFormats = c("%Y-%m-%d %H:%M",
-                                                      "%Y-%m-%d %H:%M:%S"),
+                                                      "%Y-%m-%d %H:%M:%S",
+                                                      "%Y-%m-%d %I:%M %p",
+                                                      "%Y-%m-%d %I:%M:%S %p",
+                                                      "%Y-%m-%d %I:%M %P",
+                                                      "%Y-%m-%d %I:%M:%S %P"),
                                        tz = timezone)
            # Will flag X an additional 30 min after the
            # end of the maintenance to allow parameters
