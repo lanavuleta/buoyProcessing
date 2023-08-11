@@ -77,33 +77,55 @@ edit_error_drift <- function(error_drift, sensor_maint) {
 #' Title
 #'
 #' @param sensor_chars dataframe. Output from read_sensor_chars()
+#' @inheritParams read_sensor_chars
 #'
 #' @importFrom dplyr rowwise mutate
 #' @importFrom magrittr "%>%"
 #'
 #' @return dataframe
 #' @export
-edit_sensor_chars <- function(sensor_chars) {
+edit_sensor_chars <- function(sensor_chars, error_drift) {
 
-  check_sensor_chars(sensor_chars)
+  # To keep track of each sensor and not have to join later (avoids any issues
+  # that might arise from sensors being given the same name)
+  sensor_chars <- mutate(sensor_chars, row_num = row_number())
+
+  # We only need the sensors that will have error assigned to them to follow
+  # the correct accuracy formatting
+  sensor_chars_accuracy <- sensor_chars %>%
+    filter(sensor_header %in% error_drift$sensor_header)
+
+  sensor_chars_accuracy <- sensor_chars_accuracy %>%
+    # NA unit messes with the paste in regex pattern creation below
+    mutate(unit = ifelse(is.na(unit), "", unit),
+           # Looking for accuracy in the form of:
+           # 1 m/s (0-10m/s), 2 m/s (10-20m/s)
+           accuracy_regex_range = paste0("(\\+/-)? *(?<error>(\\d*\\.)?\\d+) *(?<unit>%|",
+                                         unit,
+                                         ") *(\\( *(?<lowbound>[+-]?(\\d*\\.)?\\d+) *",
+                                         "- *(?<highbound>[+-]?(\\d*\\.)?\\d+) *(",
+                                         unit,
+                                         ")? *\\))"),
+           # Looking for accuracy in the form of:
+           # 1 m/s
+           accuracy_regex_basic = paste0("^(\\+/-)? *(?<error>(\\d*\\.)?\\d+) *(?<unit>%|", unit, ")$")) %>%
+    select(sensor_header, unit, accuracy, accuracy_regex_range, accuracy_regex_basic, row_num)
+
+  formatted_accuracy <- apply(sensor_chars_accuracy, 1, format_accuracy)
+
+  for (i in 1:nrow(sensor_chars_accuracy)) {
+    sensor_chars_accuracy$accuracy[i] <- sca[i]
+  }
+
+  sensor_chars_accuracy <- sensor_chars_accuracy %>%
+    select(row_num, accuracy)
 
   sensor_chars <- sensor_chars %>%
-    rowwise() %>%
-    mutate(accuracy_unit = ifelse(is.na(unit),
-                                  NA,
-                                  # .*? does lazy matching, and matches the first instance
-                                  # and the .* at the end catches anything else
-                                  sub(pattern = paste0(".*?\\d+\\.?\\d* *(", unit, ").*"),
-                                      replacement = "\\1",
-                                      x = accuracy)),
-           accuracy_val  = ifelse(is.na(unit),
-                                  sub(pattern = paste0(".*?(\\d+\\.?\\d*).*"),
-                                      replacement = "\\1",
-                                      x = accuracy),
-                                  sub(pattern = paste0(".*?(\\d+\\.?\\d*) *", unit, ".*"),
-                                      replacement = "\\1",
-                                      x = accuracy)),
-           accuracy_val  = as.numeric(accuracy_val))
+    left_join(sensor_chars_accuracy, by = "row_num") %>%
+    # We don't further use the accuracies listed for the other sensors. Only
+    # needed for sensors to which we will assign grade
+    mutate(accuracy = accuracy.y) %>%
+    select(-c(row_num, accuracy.x, accuracy.y))
 
 }
 
@@ -127,14 +149,12 @@ combine_chars_with_error <- function(sensor_chars, error_drift) {
 
   sensor_chars <- sensor_chars %>%
     match_chars_error(error_drift) %>%
-    select(sensor_header, unit, accuracy_val,
+    select(sensor_header, unit, accuracy,
            operating_range_min, operating_range_max,
            roc_threshold, repeat_0s_max,
            local_range_min, local_range_max,
            error_info) %>%
     mutate(unit = ifelse(unit == "none", NA, unit))
-
-  check_accuracy_for_grading(sensor_chars)
 
   return(sensor_chars)
 

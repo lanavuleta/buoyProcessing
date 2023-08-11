@@ -36,7 +36,7 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
 
   sensor_maint <- read_sensor_maint(info_fpath, timezone)
   error_drift  <- read_error_drift(info_fpath, sensor_maint)
-  sensor_chars <- read_sensor_chars(info_fpath) %>%
+  sensor_chars <- read_sensor_chars(info_fpath, error_drift) %>%
     combine_chars_with_error(error_drift)
 
   # Read in data from buoy_data ------------------------------------------------

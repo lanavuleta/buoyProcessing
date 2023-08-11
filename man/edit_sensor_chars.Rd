@@ -4,10 +4,12 @@
 \alias{edit_sensor_chars}
 \title{Title}
 \usage{
-edit_sensor_chars(sensor_chars)
+edit_sensor_chars(sensor_chars, error_drift)
 }
 \arguments{
 \item{sensor_chars}{dataframe. Output from read_sensor_chars()}
+
+\item{error_drift}{dataframe. Output from read_error_drift()}
 }
 \value{
 dataframe

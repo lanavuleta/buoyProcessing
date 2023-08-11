@@ -93,37 +93,6 @@ check_error_drift <- function(error_drift) {
 
 #' Title
 #'
-#' @inheritParams edit_sensor_chars
-#'
-#' @importFrom dplyr rowwise mutate filter select case_when
-#' @importFrom magrittr "%>%"
-#'
-#' @export
-check_sensor_chars <- function(sensor_chars) {
-
-  # Checking if the accuracy
-  bad_accuracy <- sensor_chars %>%
-    rowwise() %>%
-    mutate(accuracy_issues = ifelse(is.na(accuracy),
-                                    NA,
-                                    get_accuracy_units(accuracy, unit))) %>%
-    filter(isTRUE(accuracy_issues)) %>%
-    select(-accuracy_issues)
-
-  if (nrow(bad_accuracy) != 0) {
-    print.data.frame(bad_accuracy)
-    stop(paste("Issue with the sensor characteristics sheet. Expected values in",
-               "the accuracy column look like '+/- VALUE UNIT', where VALUE is",
-               "some numeric value, and UNIT matches the unit listed in the",
-               "unit column OR '+/- VALUE %', where VALUE is some numeric value.",
-               "\nIf unknown, the accuracy should be left blank.",
-               "\nEdit the sensor characteristics sheet accordingly and try again."))
-  }
-
-}
-
-#' Title
-#'
 #' @param accuracy string. Accuracy from sensor_chars row
 #' @param unit string. Characters remaining after the "+/- x.xx" is extracted
 #'
@@ -204,38 +173,6 @@ check_error_maint_match <- function(error_drift) {
     stop(paste("Issue with the error drift sheet. The date(s) printed above",
                "could not be matched with a date in the sensor maintenance",
                "sheet. Edit the dates accordingly and try again."))
-  }
-
-}
-
-#' Title
-#'
-#' @inheritParams edit_sensor_chars
-#'
-#' @importFrom dplyr select filter
-#' @importFrom magrittr "%>%"
-#'
-#' @export
-check_accuracy_for_grading <- function(sensor_chars) {
-
-  missing_accuracy <- sensor_chars %>%
-    # Select all rows with a pre calibration or clean value (check_error will
-    # have ensured that if a pre value exists, a post value does too). These are
-    # the rows for which a grade will be calculated and an accuracy is therefore
-    # required
-    rowwise() %>%
-    filter(!is.null(unlist(error_info)) & is.na(accuracy_val))
-
-  if (nrow(missing_accuracy) != 0) {
-    print.data.frame(missing_accuracy %>%
-                       select(sensor_header:roc_threshold))
-    stop(paste("Issue with sensor characteristics. Trying to calculate error and",
-               "assign grades. For each of the parameters listed in the error",
-               "drift sheet, the sensor characteristics sheet must list an",
-               "accuracy, as the accuracy is used to determine the grade.",
-               "\nIn the sensor characteristics sheet, add an accuracy to the",
-               "parameters listed above and try again."),
-         call. = FALSE)
   }
 
 }

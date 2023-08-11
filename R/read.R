@@ -129,12 +129,13 @@ read_error_drift <- function(info_fpath, sensor_maint) {
 #' Title
 #'
 #' @inheritParams process_buoy
+#' @param error_drift dataframe. Output from read_error_drift()
 #'
 #' @importFrom readxl read_xlsx
 #'
 #' @return dataframe
 #' @export
-read_sensor_chars <- function(info_fpath) {
+read_sensor_chars <- function(info_fpath, error_drift) {
 
   sensor_chars <- read_xlsx(info_fpath,
                             sheet = "sensor_characteristics")
@@ -156,7 +157,7 @@ read_sensor_chars <- function(info_fpath) {
                       "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"),
                     cols_correct)
 
-  sensor_chars <- edit_sensor_chars(sensor_chars)
+  sensor_chars <- edit_sensor_chars(sensor_chars, error_drift)
 
   return(sensor_chars)
 
