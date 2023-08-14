@@ -174,11 +174,30 @@ read_sensor_chars <- function(info_fpath, error_drift) {
 #' @param data_qcd_fpath string. Path to QCd data csv
 #'
 #' @importFrom readr read_csv
+#' @importFrom dplyr distinct select contains mutate_all
 #'
 #' @return dataframe, as was output by combine_buoy()
 #' @export
 read_data_qcd <- function(data_qcd_fpath) {
   data_qcd <- read_csv(data_qcd_fpath, name_repair = "minimal")
+
+  flag_problems <- data_qcd %>%
+    # In case there are any duplicate names. select() requires unique colnames
+    distinct() %>%
+    select(contains("_Flag")) %>%
+    mutate_all(~strsplit(., " ?, ?"))
+
+  flag_problems <- unique(unlist(flag_problems))
+
+  if(any(!flag_problems %in% c("1", "2", "3", "4", "X1", "X2", "X3", "X", "M"))) {
+    stop(paste("Issue with the QC'd reuploaded data.\nTool expects the following",
+               "flags, assigned as described in the 'Help' section, and separated",
+               "by a comma in cases where multiple flags have been assigned",
+               "to one measurement:",
+               "\n\t1\n\t2\n\t3\n\t4\n\tX1\n\tX1\n\tX3\n\tX\n\tM",
+               "Ensure the data adheres to these rules and try again."
+               ))
+  }
 }
 
 #' Title
