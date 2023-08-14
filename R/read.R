@@ -132,6 +132,8 @@ read_error_drift <- function(info_fpath, sensor_maint) {
 #' @param error_drift dataframe. Output from read_error_drift()
 #'
 #' @importFrom readxl read_xlsx
+#' @importFrom dplyr mutate select
+#' @importFrom magrittr "%>%"
 #'
 #' @return dataframe
 #' @export
@@ -140,7 +142,7 @@ read_sensor_chars <- function(info_fpath, error_drift) {
   sensor_chars <- read_xlsx(info_fpath,
                             sheet = "sensor_characteristics")
 
-  cols_correct <- c("sensor_header", "unit", "accuracy",
+  cols_correct <- c("sensor_header", "unit", "accuracy_used", "accuracy_factory_specs",
                     "operating_range_min", "operating_range_max",
                     "roc_threshold", "repeat_0s_max",
                     "local_range_max", "local_range_min")
@@ -150,6 +152,10 @@ read_sensor_chars <- function(info_fpath, error_drift) {
                "names are:", paste(cols_correct, collapse = ", "), ". One or",
                "more required column is missing.\nEdit accordingly and try again."))
   }
+
+  sensor_chars <- sensor_chars %>%
+    mutate(accuracy = accuracy_used) %>%
+    select(-c(accuracy_used, accuracy_factory_specs))
 
   check_input_class(sensor_chars,
                     "Sensor Characteristics",
