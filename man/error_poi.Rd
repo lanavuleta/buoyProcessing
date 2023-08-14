@@ -4,12 +4,12 @@
 \alias{error_poi}
 \title{Title}
 \usage{
-error_poi(data_poi, accuracy_val, error_info, parameter)
+error_poi(data_poi, sensor_accuracy, error_info, parameter)
 }
 \arguments{
 \item{data_poi}{dataframe. Datetime column and parameter of interest column}
 
-\item{accuracy_val}{numeric. Instrument accuracy}
+\item{sensor_accuracy}{numeric. Instrument accuracy as output by format_accuracy()}
 
 \item{error_info}{dataframe}
 

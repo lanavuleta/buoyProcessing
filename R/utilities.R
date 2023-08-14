@@ -73,8 +73,8 @@ format_accuracy <- function(sca) {
       formatted_accuracy <- sca$accuracy %>%
         str_match(sca$accuracy_regex_basic) %>%
         as.data.frame() %>%
-        select(error, unit) %>%
-        mutate(error = as.numeric(error))
+        select(accuracy, unit) %>%
+        mutate(accuracy = as.numeric(accuracy))
 
       # If unit doesn't match with the correct unit or %, an incorrect unit was written in the accuracy cell.
       # If unit is NA, no match was completed.
@@ -83,9 +83,9 @@ format_accuracy <- function(sca) {
         stop(paste("Issue with the accuracy listed for sensor", sca$sensor_header,
                    "\nThe tool identified this as a basic accuracy (ie same accuracy",
                    "applies for the entire range). The expected accuracy setup is:",
-                   "\n\t'+/- error %' OR '+/- error unit'",
+                   "\n\t'+/- accuracy %' OR '+/- accuracy unit'",
                    "\n\tex:'+/- 1 %' OR '+/- 0.2 NTU'",
-                   "\n, where 'error' is a numeric value indicating the error and 'unit'",
+                   "\n, where 'accuracy' is a numeric value indicating the accuracy and 'unit'",
                    "matches with the unit listed for the sensor in the Sensor",
                    "Characteristics sheet.",
                    "\nEdit the Sensor Characteristics sheet and try again."),
@@ -97,8 +97,8 @@ format_accuracy <- function(sca) {
       formatted_accuracy <- sca$accuracy %>%
         str_match_all(sca$accuracy_regex_range) %>%
         as.data.frame() %>%
-        select(error, unit, lowbound, highbound) %>%
-        mutate(error = as.numeric(error),
+        select(accuracy, unit, lowbound, highbound) %>%
+        mutate(accuracy = as.numeric(accuracy),
                lowbound = as.numeric(lowbound),
                highbound = as.numeric(highbound))
 

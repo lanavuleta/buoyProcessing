@@ -4,10 +4,10 @@
 \alias{calculate_grade}
 \title{Title}
 \usage{
-calculate_grade(accuracy_val, error_info)
+calculate_grade(sensor_accuracy, error_info)
 }
 \arguments{
-\item{accuracy_val}{numeric. Instrument accuracy}
+\item{sensor_accuracy}{numeric. Instrument accuracy as output by format_accuracy()}
 
 \item{error_info}{dataframe}
 }

@@ -61,16 +61,23 @@ edit_error_drift <- function(error_drift, sensor_maint) {
 
   error_drift <- error_drift %>%
     mutate(error_calib = abs(pre_calibration - post_calibration),
-           error_clean = abs(pre_clean - post_clean)) %>%
+           error_clean = abs(pre_clean - post_clean),
+           error_calib_perc = 100*(error_calib/pre_calibration),
+           error_clean_perc = 100*(error_clean/pre_clean)) %>%
     # Need to do rowwise because sum returns the sum of ALL values present in
     # its arguments, and we must use sum to remove NAs
     rowwise() %>%
     mutate(error = case_when(is.na(error_calib) & is.na(error_clean) ~ NA,
-                             TRUE ~ sum(error_calib, error_clean, na.rm = TRUE))) %>%
+                             TRUE ~ sum(error_calib, error_clean, na.rm = TRUE)),
+           # Need error percent if accuracy is given as %age
+           error_perc = sum(error_calib_perc, error_clean_perc, na.rm = TRUE),
+           # Need to store the larger value in case if accuracy differs in different
+           # ranges. We always go with the bigger value
+           value = max(pre_calibration, post_calibration, pre_clean, post_clean, na.rm = TRUE)) %>%
     select(-c(pre_calibration, post_calibration, pre_clean, post_clean,
-              error_calib, error_clean, date)) %>%
+              error_calib, error_clean, error_calib_perc, error_clean_perc, date)) %>%
     # There might be numerous calibrations over a season for each sensor
-    nest(error_info = c(end_datetime, error))
+    nest(error_info = c(end_datetime, error, error_perc, value))
 
 }
 
@@ -100,7 +107,7 @@ edit_sensor_chars <- function(sensor_chars, error_drift) {
     mutate(unit = ifelse(is.na(unit), "", unit),
            # Looking for accuracy in the form of:
            # 1 m/s (0-10m/s), 2 m/s (10-20m/s)
-           accuracy_regex_range = paste0("(\\+/-)? *(?<error>(\\d*\\.)?\\d+) *(?<unit>%|",
+           accuracy_regex_range = paste0("(\\+/-)? *(?<accuracy>(\\d*\\.)?\\d+) *(?<unit>%|",
                                          unit,
                                          ") *(\\( *(?<lowbound>[+-]?(\\d*\\.)?\\d+) *",
                                          "- *(?<highbound>[+-]?(\\d*\\.)?\\d+) *(",
@@ -108,13 +115,13 @@ edit_sensor_chars <- function(sensor_chars, error_drift) {
                                          ")? *\\))"),
            # Looking for accuracy in the form of:
            # 1 m/s
-           accuracy_regex_basic = paste0("^(\\+/-)? *(?<error>(\\d*\\.)?\\d+) *(?<unit>%|", unit, ")$")) %>%
+           accuracy_regex_basic = paste0("^(\\+/-)? *(?<accuracy>(\\d*\\.)?\\d+) *(?<unit>%|", unit, ")$")) %>%
     select(sensor_header, unit, accuracy, accuracy_regex_range, accuracy_regex_basic, row_num)
 
   formatted_accuracy <- apply(sensor_chars_accuracy, 1, format_accuracy)
 
   for (i in 1:nrow(sensor_chars_accuracy)) {
-    sensor_chars_accuracy$accuracy[i] <- sca[i]
+    sensor_chars_accuracy$accuracy[i] <- formatted_accuracy[i]
   }
 
   sensor_chars_accuracy <- sensor_chars_accuracy %>%

@@ -99,7 +99,7 @@ handle_poi <- function(input,
              input$repeat_0s_max,
              input$parameter,
              combine_flags, missing_vals) %>%
-    error_poi(input$accuracy_val, input$error_info[[1]],
+    error_poi(input$accuracy[[1]], input$error_info[[1]],
               input$parameter)
 
   # Use name from sensor_chars because if two columns from buoy data have the
@@ -159,18 +159,18 @@ flag_poi <- function(data_poi,
 #' Title
 #'
 #' @inheritParams flag_poi
-#' @param accuracy_val numeric. Instrument accuracy
+#' @param sensor_accuracy numeric. Instrument accuracy as output by format_accuracy()
 #' @param error_info dataframe
 #'
 #' @importFrom dplyr mutate case_when select
 #'
 #' @return dataframe
 #' @export
-error_poi <- function(data_poi, accuracy_val, error_info, parameter) {
+error_poi <- function(data_poi, sensor_accuracy, error_info, parameter) {
 
   if (!is.null(error_info)) {
 
-    error_info <- calculate_grade(accuracy_val, error_info)
+    error_info <- calculate_grade(sensor_accuracy, error_info)
 
     data_poi <- mutate(data_poi, error = NA_character_)
 
