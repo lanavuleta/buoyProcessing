@@ -159,7 +159,7 @@ read_sensor_chars <- function(info_fpath, error_drift) {
 
   check_input_class(sensor_chars,
                     "Sensor Characteristics",
-                    c("character", "character", "character",
+                    c("character", "character", "character", "character",
                       "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"),
                     cols_correct)
 
