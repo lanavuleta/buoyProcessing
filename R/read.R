@@ -182,6 +182,7 @@ read_data_qcd <- function(data_qcd_fpath) {
   data_qcd <- read_csv(data_qcd_fpath, name_repair = "minimal")
 
   flag_problems <- data_qcd %>%
+    as.data.frame() %>%
     # In case there are any duplicate names. select() requires unique colnames
     distinct() %>%
     select(contains("_Flag")) %>%
@@ -189,7 +190,7 @@ read_data_qcd <- function(data_qcd_fpath) {
 
   flag_problems <- unique(unlist(flag_problems))
 
-  if(any(!flag_problems %in% c("1", "2", "3", "4", "X1", "X2", "X3", "X", "M"))) {
+  if(any(!flag_problems %in% c("1", "2", "3", "4", "X1", "X2", "X3", "X", "M", NA))) {
     stop(paste("Issue with the QC'd reuploaded data.\nTool expects the following",
                "flags, assigned as described in the 'Help' section, and separated",
                "by a comma in cases where multiple flags have been assigned",
@@ -198,6 +199,8 @@ read_data_qcd <- function(data_qcd_fpath) {
                "Ensure the data adheres to these rules and try again."
                ))
   }
+
+  return(data_qcd)
 }
 
 #' Title
