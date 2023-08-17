@@ -14,6 +14,7 @@ Imports:
     forecast,
     fuzzyjoin,
     ggplot2,
+    janitor,
     lubridate,
     magrittr,
     purrr,

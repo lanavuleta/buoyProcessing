@@ -203,12 +203,13 @@ check_input_class <- function(input, input_name, classes_correct, cols_correct) 
 
   classes_issue <- left_join(classes_correct, classes_input, by = "colname") %>%
     filter(type_correct != type_actual) %>%
-    mutate(type_correct = ifelse(type_correct == "POSIXct", ""))
+    mutate(type_correct = ifelse(type_correct == "POSIXct", "Date"))
 
   if (nrow(classes_issue) != 0) {
     print.data.frame(classes_issue)
     stop(paste("Issue with", input_name, "\nThe values input in the above",
-               "columns were not the expected type.\nNote: a",
+               "columns were not the expected type.\nNote: check the column type in the input Excel spreadsheet",
+               "and ensure it lines up with what is described in the Help - Buoy Info files.\nNote: a",
                "column that should be numeric can only contain digits and no",
                "special characters or letters, such as '<' or any text.",
                "\nNote: a column that should be a date or a datetime should follow",

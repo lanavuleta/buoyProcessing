@@ -119,13 +119,16 @@ read_sensor_maint <- function(info_fpath) {
 #' @param sensor_maint dataframe. Output from read_sensor_maint()
 #'
 #' @importFrom readxl read_xlsx
+#' @importFrom dplyr mutate
 #'
 #' @return dataframe
 #' @export
 read_error_drift <- function(info_fpath, sensor_maint) {
 
   error_drift <- read_xlsx(info_fpath,
-                           sheet = "error_drift")
+                           sheet = "error_drift") %>%
+    # R will read this in as a datetime instead of as a Date
+    mutate(date = as.Date(date))
 
   cols_correct <- c("sensor_header", "unit", "date",
                     "pre_calibration", "post_calibration",
@@ -140,7 +143,7 @@ read_error_drift <- function(info_fpath, sensor_maint) {
 
   check_input_class(error_drift,
                     "Error Drift",
-                    c("character", "character", "POSIXct",
+                    c("character", "character", "Date",
                       "numeric", "numeric", "numeric", "numeric"),
                     cols_correct)
 
