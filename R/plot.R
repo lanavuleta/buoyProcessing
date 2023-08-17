@@ -3,17 +3,6 @@
 #' @param data dataframe. Output from combine_buoy()
 #' @param index numeric. List index of parameter we wish to plot
 #'
-#' @return ggplot
-#' @export
-process_plot <- function(data, index) {
-  make_plot(get_plot_data(data, index))
-}
-
-#' Title
-#'
-#' @param data dataframe. Output from combine_buoy()
-#' @param index numeric. List index of parameter we wish to plot
-#'
 #' @return dataframe. One of the list elements output from process_buoy()
 #' @export
 get_plot_data <- function(data, index) {
