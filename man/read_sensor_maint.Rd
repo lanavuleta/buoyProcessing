@@ -4,12 +4,10 @@
 \alias{read_sensor_maint}
 \title{Title}
 \usage{
-read_sensor_maint(info_fpath, timezone)
+read_sensor_maint(info_fpath)
 }
 \arguments{
 \item{info_fpath}{file path. Path to the buoy info excel file}
-
-\item{timezone}{string. Timezone of the data used. See options with OlsonNames()}
 }
 \value{
 dataframe

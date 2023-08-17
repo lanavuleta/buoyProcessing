@@ -4,12 +4,10 @@
 \alias{edit_sensor_maint}
 \title{Title}
 \usage{
-edit_sensor_maint(sensor_maint, timezone)
+edit_sensor_maint(sensor_maint)
 }
 \arguments{
 \item{sensor_maint}{dataframe. Output from read_sensor_maint()}
-
-\item{timezone}{string. Timezone of the data used. See options with OlsonNames()}
 }
 \value{
 dataframe

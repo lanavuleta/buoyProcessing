@@ -1,7 +1,6 @@
 #' Title
 #'
 #' @param sensor_maint dataframe. Output from read_sensor_maint()
-#' @inheritParams process_buoy
 #'
 #' @importFrom dplyr mutate select
 #' @importFrom lubridate year month day hour minute minutes
@@ -9,7 +8,7 @@
 #'
 #' @return dataframe
 #' @export
-edit_sensor_maint <- function(sensor_maint, timezone) {
+edit_sensor_maint <- function(sensor_maint) {
 
   sensor_maint <- sensor_maint %>%
     mutate(start_datetime = as.POSIXct(start_datetime,
@@ -18,8 +17,7 @@ edit_sensor_maint <- function(sensor_maint, timezone) {
                                                       "%Y-%m-%d %I:%M %p",
                                                       "%Y-%m-%d %I:%M:%S %p",
                                                       "%Y-%m-%d %I:%M %P",
-                                                      "%Y-%m-%d %I:%M:%S %P"),
-                                       tz = timezone)
+                                                      "%Y-%m-%d %I:%M:%S %P"))
            # Will flag X an additional 10 min before the
            # end of the maintenance to allow parameters
            # to settle
@@ -30,8 +28,7 @@ edit_sensor_maint <- function(sensor_maint, timezone) {
                                                       "%Y-%m-%d %I:%M %p",
                                                       "%Y-%m-%d %I:%M:%S %p",
                                                       "%Y-%m-%d %I:%M %P",
-                                                      "%Y-%m-%d %I:%M:%S %P"),
-                                       tz = timezone)
+                                                      "%Y-%m-%d %I:%M:%S %P"))
            # Will flag X an additional 30 min after the
            # end of the maintenance to allow parameters
            # to settle

@@ -4,14 +4,12 @@
 \alias{format_datetime}
 \title{Title}
 \usage{
-format_datetime(data, datetime_format, timezone)
+format_datetime(data, datetime_format)
 }
 \arguments{
 \item{data}{dataframe. Output from read_data()}
 
 \item{datetime_format}{string. Datetime format as would be used by as.Date()}
-
-\item{timezone}{string. Timezone of the data used. See options with OlsonNames()}
 }
 \value{
 dataframe

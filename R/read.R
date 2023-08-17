@@ -87,7 +87,7 @@ read_data <- function(data_fpath, row_param_names, row_data_start, data_params_u
 #'
 #' @return dataframe
 #' @export
-read_sensor_maint <- function(info_fpath, timezone) {
+read_sensor_maint <- function(info_fpath) {
 
   sensor_maint <- read_xlsx(info_fpath,
                             sheet = "sensor_maintenance")
@@ -107,7 +107,7 @@ read_sensor_maint <- function(info_fpath, timezone) {
                     cols_correct)
   check_flags(sensor_maint$flag)
 
-  sensor_maint <- edit_sensor_maint(sensor_maint, timezone)
+  sensor_maint <- edit_sensor_maint(sensor_maint)
 
   return(sensor_maint)
 

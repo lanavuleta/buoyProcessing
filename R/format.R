@@ -7,7 +7,7 @@
 #'
 #' @return dataframe
 #' @export
-format_datetime <- function(data, datetime_format, timezone) {
+format_datetime <- function(data, datetime_format) {
 
   # Will always expect that the first column is the datetime
   date_col <- 1
@@ -15,12 +15,8 @@ format_datetime <- function(data, datetime_format, timezone) {
   # To standardize the datetime column name
   colnames(data)[date_col] <- "datetime"
 
-  # Set the timezone because default would be to
-  # use the computer's datetime, which can lead to different datetimes
-  # between the different datasets
   data <- mutate(data, datetime = as.POSIXct(datetime,
-                                             format = datetime_format,
-                                             tz = timezone))
+                                             format = datetime_format))
 
   if (all(is.na(data$datetime))) {
     stop(paste("Issue with the input datetime format. It looks like the format",
