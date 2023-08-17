@@ -97,7 +97,8 @@ read_sensor_maint <- function(info_fpath, timezone) {
   if (any(!cols_correct %in% colnames(sensor_maint))) {
     stop(paste("Issue with the sensor maintenance sheet. Required column",
                "names are:", paste(cols_correct, collapse = ", "), ". One or",
-               "more required column is missing.\nEdit accordingly and try again."))
+               "more required column is missing.\nEdit accordingly and try again."),
+         call. = FALSE)
   }
 
   check_input_class(sensor_maint,
@@ -133,7 +134,8 @@ read_error_drift <- function(info_fpath, sensor_maint) {
   if (any(!cols_correct %in% colnames(error_drift))) {
     stop(paste("Issue with the sensor error drift sheet. Required column",
                "names are:", paste(cols_correct, collapse = ", "), ". One or",
-               "more required column is missing.\nEdit accordingly and try again."))
+               "more required column is missing.\nEdit accordingly and try again."),
+         call. = FALSE)
   }
 
   check_input_class(error_drift,
@@ -171,7 +173,8 @@ read_sensor_chars <- function(info_fpath, error_drift) {
   if (any(!cols_correct %in% colnames(sensor_chars))) {
     stop(paste("Issue with the sensor characteristics sheet. Required column",
                "names are:", paste(cols_correct, collapse = ", "), ". One or",
-               "more required column is missing.\nEdit accordingly and try again."))
+               "more required column is missing.\nEdit accordingly and try again."),
+         call. = FALSE)
   }
 
   sensor_chars <- sensor_chars %>%
@@ -218,7 +221,8 @@ read_data_qcd <- function(data_qcd_fpath) {
                "to one measurement:",
                "\n\t1\n\t2\n\t3\n\t4\n\tX1\n\tX1\n\tX3\n\tX\n\tM",
                "Ensure the data adheres to these rules and try again."
-               ))
+               ),
+         call. = FALSE)
   }
 
   return(data_qcd)

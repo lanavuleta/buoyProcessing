@@ -31,7 +31,8 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
           row_data_start == row_units)) {
     stop(paste("Issue with the input row numbers. Each row number must differ",
                "from the next. If there is no distinct row for sensor units,",
-               "consider adding such a row to the buoy datafile or processing your data in a different way."))
+               "consider adding such a row to the buoy datafile or processing your data in a different way."),
+         call.= FALSE)
   }
 
   datetime_format <- format_datetime_string(datetime_format)

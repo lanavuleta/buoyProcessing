@@ -172,7 +172,8 @@ check_error_maint_match <- function(error_drift) {
     print.data.frame(missing_date)
     stop(paste("Issue with the error drift sheet. The date(s) printed above",
                "could not be matched with a date in the sensor maintenance",
-               "sheet. Edit the dates accordingly and try again."))
+               "sheet. Edit the dates accordingly and try again."),
+         call. = FALSE)
   }
 
 }
@@ -233,7 +234,8 @@ check_flags <- function(flags) {
 
   if (any(!flags %in% flags_expected)) {
     stop(paste("Issue with the flags in Sensor Maintenance", "\nThe acceptable",
-               "flags are: X1, X2, X3.", "\nEdit accordingly and try again."))
+               "flags are: X1, X2, X3.", "\nEdit accordingly and try again."),
+         call. = FALSE)
   }
 
 }

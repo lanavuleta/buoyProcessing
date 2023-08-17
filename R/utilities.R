@@ -158,7 +158,8 @@ format_accuracy <- function(sca) {
                  "\n\t +/- value % \t\t if accuracy is given as a percent rather than as a unit",
                  "\n\t +/- value1 x (range_min1 - range_max1 unit), +/- value2 y (range_min2 - range_max2 unit), ...",
                  "\n\t\t, where x and y are either the unit as is listed for that sensor in Sensor Characteristics",
-                 "or %"))
+                 "or %"),
+           call. = FALSE)
     }
   }
 
