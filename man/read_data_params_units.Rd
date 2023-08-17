@@ -4,7 +4,7 @@
 \alias{read_data_params_units}
 \title{Title}
 \usage{
-read_data_params_units(data_fpath, row_param_names, row_units)
+read_data_params_units(data_fpath, row_param_names, row_units, sensor_chars)
 }
 \arguments{
 \item{data_fpath}{file path. Path to the raw buoy data file}
@@ -12,6 +12,8 @@ read_data_params_units(data_fpath, row_param_names, row_units)
 \item{row_param_names}{numeric. Row at which parameter names are listed}
 
 \item{row_units}{numeric. Row at which parameter units are listed}
+
+\item{sensor_chars}{dataframe. Output from read_sensor_chars()}
 }
 \value{
 dataframe

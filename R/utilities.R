@@ -153,12 +153,10 @@ format_accuracy <- function(sca) {
     } else {
       stop(paste("Issue with the accuracy listed for sensor", sca$sensor_header,
                  "\nCould not identify the accuracy. Expected accuracy follows one",
-                 "of the four options listed below:",
-                 "\n\t Empty cell \t\tif accuracy is unknown",
-                 "\n\t 'Unknown' \t\tif accuracy is unknown",
+                 "of the three options listed below:",
                  "\n\t +/- value unit \t where unit is the same as is listed for that sensor in Sensor Characteristics",
                  "\n\t +/- value % \t\t if accuracy is given as a percent rather than as a unit",
-                 "\n\t +/- value1 x (range_min1 - range_max1 unit), +/- value2 y (range_min2 - range_max2 unit)",
+                 "\n\t +/- value1 x (range_min1 - range_max1 unit), +/- value2 y (range_min2 - range_max2 unit), ...",
                  "\n\t\t, where x and y are either the unit as is listed for that sensor in Sensor Characteristics",
                  "or %"))
     }

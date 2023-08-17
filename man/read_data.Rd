@@ -4,7 +4,13 @@
 \alias{read_data}
 \title{Title}
 \usage{
-read_data(data_fpath, row_param_names, row_data_start, data_params_units)
+read_data(
+  data_fpath,
+  row_param_names,
+  row_data_start,
+  data_params_units,
+  sensor_chars
+)
 }
 \arguments{
 \item{data_fpath}{file path. Path to the raw buoy data file}
@@ -14,6 +20,8 @@ read_data(data_fpath, row_param_names, row_data_start, data_params_units)
 \item{row_data_start}{numeric. Row at which buoy data begins}
 
 \item{data_params_units}{dataframe. Output from read_data_params_units()}
+
+\item{sensor_chars}{dataframe. Output from read_sensor_chars()}
 }
 \value{
 dataframe

@@ -1,14 +1,16 @@
 #' Title
 #'
 #' @inheritParams process_buoy
+#' @inheritParams combine_chars_with_error
 #'
 #' @importFrom stringr str_remove
 #' @importFrom magrittr "%>%"
 #' @importFrom utils read.csv
+#' @importFrom dplyr slice
 #'
 #' @return dataframe
 #' @export
-read_data_params_units <- function(data_fpath, row_param_names, row_units) {
+read_data_params_units <- function(data_fpath, row_param_names, row_units, sensor_chars) {
 
   data <- read.csv(data_fpath)
 
@@ -22,7 +24,15 @@ read_data_params_units <- function(data_fpath, row_param_names, row_units) {
            # which will not be read in from the sensor_chars sheet
            param = str_remove(param, " $"),
            unit = ifelse(unit == "", NA, unit)) %>%
-    filter(!grepl("date|time", param, ignore.case = T))
+    slice(-1)
+
+  if (nrow(data_params_units) != nrow(sensor_chars)) {
+    stop(paste("Issue with the input buoy data. The tool can only accept data",
+               "that has one single column for the",
+               "date and time and one column for each of the sensors listed in the",
+               "Sensor Characteristics sheet."),
+         call. = FALSE)
+  }
 
   return(data_params_units)
 
@@ -32,6 +42,7 @@ read_data_params_units <- function(data_fpath, row_param_names, row_units) {
 #'
 #' @inheritParams process_buoy
 #' @inheritParams check_params_units
+#' @inheritParams combine_chars_with_error
 #'
 #' @importFrom dplyr filter row_number
 #' @importFrom magrittr "%>%"
@@ -39,7 +50,7 @@ read_data_params_units <- function(data_fpath, row_param_names, row_units) {
 #'
 #' @return dataframe
 #' @export
-read_data <- function(data_fpath, row_param_names, row_data_start, data_params_units) {
+read_data <- function(data_fpath, row_param_names, row_data_start, data_params_units, sensor_chars) {
 
   data <- read_csv(data_fpath,
                    # Do row_xx-1 because the read in process turns the first row
@@ -51,11 +62,21 @@ read_data <- function(data_fpath, row_param_names, row_data_start, data_params_u
     # already been skipped
     filter(row_number() >= row_data_start - row_param_names)
 
+  if (sensor_chars$sensor_header[1] != colnames(data)[2]) {
+    stop(paste("Issue with the input buoy data. The tool can only accept data",
+               "that has one single column for the",
+               "date and time and one column for each of the sensors listed in the",
+               "Sensor Characteristics sheet.\nThe second column of the data did",
+               "not align with the first sensor input in the Sensor Characteristics sheet."),
+         call. = FALSE)
+  }
+
   # At this point column names will likely differ from those in the original file
   # because R will add digits to differentiate between identical columns and
   # replace any spaces with ".". This is fine because subsequent use of buoy_info
   # will use the column position rather than the column name
 
+  return(data)
 }
 
 #' Title

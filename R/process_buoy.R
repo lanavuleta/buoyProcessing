@@ -21,10 +21,20 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
                          row_param_names = 2,
                          row_data_start = 5,
                          row_units = 3,
-                         datetime_format = "%m-%d-%Y %H:%M:%S",
+                         datetime_format = "mm-dd-yyyy HH:MM:SS",
                          missing_vals = c("No Data", -100000, ""),
                          timezone = "America/Regina",
                          combine_flags = TRUE) {
+
+  if (any(row_param_names == row_data_start,
+          row_param_names == row_units,
+          row_data_start == row_units)) {
+    stop(paste("Issue with the input row numbers. Each row number must differ",
+               "from the next. If there is no distinct row for sensor units,",
+               "consider adding such a row to the buoy datafile or processing your data in a different way."))
+  }
+
+  datetime_format <- format_datetime_string(datetime_format)
 
   # Account for cells that are entirely empty (this case cannot be input by the
   # GUI)
@@ -42,13 +52,14 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
   # Read in data from buoy_data ------------------------------------------------
   data_params_units <- read_data_params_units(data_fpath,
                                               row_param_names,
-                                              row_units)
+                                              row_units,
+                                              sensor_chars)
 
   # Because every parameter in parameter_data should have a matching row in
   # sensor_chars to be able to assign flags
   check_params_units(data_params_units, sensor_chars)
 
-  data <- read_data(data_fpath, row_param_names, row_data_start, data_params_units) %>%
+  data <- read_data(data_fpath, row_param_names, row_data_start, data_params_units, sensor_chars) %>%
     format_datetime(datetime_format, timezone)
 
   # Perform steps 2 (flag) and 3 (error) ---------------------------------------

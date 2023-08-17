@@ -10,7 +10,7 @@ process_buoy(
   row_param_names = 2,
   row_data_start = 5,
   row_units = 3,
-  datetime_format = "\%m-\%d-\%Y \%H:\%M:\%S",
+  datetime_format = "mm-dd-yyyy HH:MM:SS",
   missing_vals = c("No Data", -1e+05, ""),
   timezone = "America/Regina",
   combine_flags = TRUE
