@@ -172,7 +172,7 @@ error_poi <- function(data_poi, sensor_accuracy, error_info, parameter) {
 
     error_info <- calculate_grade(sensor_accuracy, error_info)
 
-    data_poi <- mutate(data_poi, error = NA_character_)
+    data_poi <- mutate(data_poi, error = "")
 
     for (i in nrow(error_info):1) {
       data_poi <- data_poi %>%
