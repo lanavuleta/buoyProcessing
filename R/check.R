@@ -66,11 +66,9 @@ check_error_drift <- function(error_drift) {
              xor(is.na(pre_clean), is.na(post_clean)))
 
   if (nrow(unmatched_pre_post) != 0) {
-    print.data.frame(unmatched_pre_post)
     stop(paste("Issue with the error drift sheet. If a parameter has one of the",
                "pre or post values filled in, the associated pre or post value",
-               "is also expected to be filled in. The above rows do not fulfill",
-               "this requirement. Edit accordingly and try again."),
+               "is also expected to be filled in.\nEdit accordingly and try again."),
          call. = FALSE)
   }
 
@@ -81,11 +79,8 @@ check_error_drift <- function(error_drift) {
     filter(n != 1)
 
   if (nrow(error_drift_dups) != 0) {
-    print.data.frame(error_drift_dups %>% select(-n) %>% left_join(error_drift) %>%
-                       select(colnames(error_drift)))
     stop(paste("Issue with the error drift sheet. Each sensor/date combination",
-               "should only exist once. The above rows do not fulfill this",
-               "requirement. Edit accordingly and try again."),
+               "should only exist once.\nEdit accordingly and try again."),
          call. = FALSE)
   }
 
@@ -121,27 +116,37 @@ get_accuracy_units <- function(accuracy, unit) {
 #' @inheritParams edit_sensor_chars
 #' @inheritParams edit_error_drift
 #'
-#' @importFrom dplyr mutate filter select
+#' @importFrom dplyr mutate filter select left_join
 #' @importFrom magrittr "%>%"
 #' @importFrom fuzzyjoin regex_join
 #'
 #' @export
 check_chars_error_match <- function(sensor_chars, error_drift) {
 
-  error_missing <- regex_join(sensor_chars, error_drift,
-                              by = c("sensor_header", "unit"),
-                              mode = "right") %>%
-    mutate(unit = unit.y,
-           sensor_header = sensor_header.y) %>%
-    filter(is.na(sensor_header)) %>%
-    mutate(unit = unit.y) %>%
+  error_missing <- left_join(error_drift, sensor_chars,
+                             by = c("sensor_header", "unit"),
+                             keep = TRUE) %>%
+    # No sensor_header from sensor_chars - no match!
+    filter(is.na(sensor_header.y)) %>%
+    mutate(unit = unit.x,
+           sensor_header = sensor_header.x) %>%
     # Reorder to match the original error_drift file for better user understanding
-    select(colnames(error_drift))
+    select(sensor_header, unit) %>%
+    unique()
 
   if (nrow(error_missing) != 0) {
-    print.data.frame(error_missing %>% select(-error_info))
-    stop(paste("Issue with the error drift sheet. The above row(s) could not",
-               "be matched with a parameter and unit from the buoy data.",
+
+    m <- ""
+
+    for (i in 1:nrow(error_missing)) {
+      row <- paste(error_missing[i,]$sensor_header, "/", error_missing[i,]$unit, collapse = ", ")
+      m <- paste(m, "\n", row)
+    }
+
+    stop(paste("Issue with the Error Drift sheet. The following parameter/unit combinations",
+               "from the Error Drift sheet",
+               "were not identified in the Sensor Characteristics sheet:",
+               "\n", m,
                "\nNote that the matching process checks if the phrase found in",
                "the 'sensor' column of the error drift is in any of the",
                "parameter names from the buoy data sheet. That means that an",
@@ -169,10 +174,11 @@ check_error_maint_match <- function(error_drift) {
     unique()
 
   if (nrow(missing_date) != 0) {
-    print.data.frame(missing_date)
-    stop(paste("Issue with the error drift sheet. The date(s) printed above",
+    stop(paste("Issue with the error drift sheet. The following date(s)",
                "could not be matched with a date in the sensor maintenance",
-               "sheet. Edit the dates accordingly and try again."),
+               "sheet:",
+               "\n\t", paste(missing_date$date, collapse = ", "),
+               "\nEdit the dates accordingly and try again."),
          call. = FALSE)
   }
 
@@ -203,12 +209,22 @@ check_input_class <- function(input, input_name, classes_correct, cols_correct) 
 
   classes_issue <- left_join(classes_correct, classes_input, by = "colname") %>%
     filter(type_correct != type_actual) %>%
-    mutate(type_correct = ifelse(type_correct == "POSIXct", "Date"))
+    mutate(type_correct = ifelse(type_correct == "POSIXct", "Date", type_correct))
 
   if (nrow(classes_issue) != 0) {
-    print.data.frame(classes_issue)
-    stop(paste("Issue with", input_name, "\nThe values input in the above",
-               "columns were not the expected type.\nNote: check the column type in the input Excel spreadsheet",
+
+    m <- ""
+
+    for (i in 1:nrow(classes_issue)) {
+      row <- sprintf("\tFor column %s, the expected type is %s and the actual type is %s\n",
+                     classes_issue[i,1], classes_issue[i,2], classes_issue[i,3])
+      m <- paste(m, row, collapse = "")
+    }
+
+    stop(paste("Issue with", input_name, "\nThe values input in the following",
+               "columns were not the expected type:\n",
+               m,
+               "\nNote: check the column type in the input Excel spreadsheet",
                "and ensure it lines up with what is described in the Help - Buoy Info files.\nNote: a",
                "column that should be numeric can only contain digits and no",
                "special characters or letters, such as '<' or any text.",
