@@ -92,6 +92,12 @@ read_sensor_maint <- function(info_fpath) {
   sensor_maint <- read_xlsx(info_fpath,
                             sheet = "sensor_maintenance")
 
+  if (nrow(sensor_maint) == 0) {
+    stop(paste("Issue with the sensor maintenance sheet. The sheet is empty. This",
+               "tool can only",
+               "handle buoys on which sensor maintenance was performed."))
+  }
+
   cols_correct <- c("start_datetime",	"end_datetime",	"flag")
 
   if (any(!cols_correct %in% colnames(sensor_maint))) {
@@ -130,6 +136,12 @@ read_error_drift <- function(info_fpath, sensor_maint) {
     # R will read this in as a datetime instead of as a Date
     mutate(date = as.Date(date))
 
+  if (nrow(error_drift) == 0) {
+    stop(paste("Issue with the error drift sheet. The sheet is empty. This",
+               "tool can only",
+               "handle buoys on which error drift was performed."))
+  }
+
   cols_correct <- c("sensor_header", "unit", "date",
                     "pre_calibration", "post_calibration",
                     "pre_clean", "post_clean")
@@ -167,6 +179,11 @@ read_sensor_chars <- function(info_fpath, error_drift) {
 
   sensor_chars <- read_xlsx(info_fpath,
                             sheet = "sensor_characteristics")
+
+
+  if (nrow(sensor_chars) == 0) {
+    stop(paste("Issue with the sensor characteristics sheet. The sheet is empty."))
+  }
 
   cols_correct <- c("sensor_header", "unit", "accuracy_used", "accuracy_factory_specs",
                     "operating_range_min", "operating_range_max",
