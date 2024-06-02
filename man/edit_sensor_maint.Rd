@@ -2,7 +2,10 @@
 % Please edit documentation in R/edit_inputs.R
 \name{edit_sensor_maint}
 \alias{edit_sensor_maint}
-\title{Title}
+\title{Edit sensor maintenance sheet
+Format the sensor maintenance dates to be in propse datetime format and edit
+the datetimes to start 10 minutes earlier and end 30 minutes later to account
+for the time period during which the boat is settling.}
 \usage{
 edit_sensor_maint(sensor_maint)
 }
@@ -13,5 +16,8 @@ edit_sensor_maint(sensor_maint)
 dataframe
 }
 \description{
-Title
+Edit sensor maintenance sheet
+Format the sensor maintenance dates to be in propse datetime format and edit
+the datetimes to start 10 minutes earlier and end 30 minutes later to account
+for the time period during which the boat is settling.
 }

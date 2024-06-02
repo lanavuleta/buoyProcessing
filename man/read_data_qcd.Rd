@@ -2,7 +2,10 @@
 % Please edit documentation in R/read.R
 \name{read_data_qcd}
 \alias{read_data_qcd}
-\title{Title}
+\title{Read already QCd data into the tool
+Note that the QCd data must fulfill many requirements. The data format should
+not be changed from what the tool outputted during the intitial QCing. Flags
+and error can be changed.}
 \usage{
 read_data_qcd(data_qcd_fpath)
 }
@@ -13,5 +16,8 @@ read_data_qcd(data_qcd_fpath)
 dataframe, as was output by combine_buoy()
 }
 \description{
-Title
+Read already QCd data into the tool
+Note that the QCd data must fulfill many requirements. The data format should
+not be changed from what the tool outputted during the intitial QCing. Flags
+and error can be changed.
 }

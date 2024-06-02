@@ -2,7 +2,9 @@
 % Please edit documentation in R/read.R
 \name{read_error_drift}
 \alias{read_error_drift}
-\title{Title}
+\title{Read error drift buoy info sheet
+Ensure that the error drift sheet format is acceptable for read-in by
+the tool.}
 \usage{
 read_error_drift(info_fpath, sensor_maint)
 }
@@ -15,5 +17,7 @@ read_error_drift(info_fpath, sensor_maint)
 dataframe
 }
 \description{
-Title
+Read error drift buoy info sheet
+Ensure that the error drift sheet format is acceptable for read-in by
+the tool.
 }

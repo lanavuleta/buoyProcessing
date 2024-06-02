@@ -2,7 +2,8 @@
 % Please edit documentation in R/plot.R
 \name{edit_plot_data}
 \alias{edit_plot_data}
-\title{Title}
+\title{Edit plot data only so far as it's easier to plot for R
+Minor edits - data types, turning columns into factors.}
 \usage{
 edit_plot_data(data_poi)
 }
@@ -13,5 +14,6 @@ edit_plot_data(data_poi)
 ggplot
 }
 \description{
-Title
+Edit plot data only so far as it's easier to plot for R
+Minor edits - data types, turning columns into factors.
 }

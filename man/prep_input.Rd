@@ -2,7 +2,9 @@
 % Please edit documentation in R/handle_poi.R
 \name{prep_input}
 \alias{prep_input}
-\title{Title}
+\title{Prepare data for processing
+Combine for the particular parameter of interest: the data and the sensor
+characteristics.}
 \usage{
 prep_input(data_poi, sensor_chars_poi)
 }
@@ -16,5 +18,7 @@ parameter of interest}
 list
 }
 \description{
-Title
+Prepare data for processing
+Combine for the particular parameter of interest: the data and the sensor
+characteristics.
 }

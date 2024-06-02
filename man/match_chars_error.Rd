@@ -2,7 +2,9 @@
 % Please edit documentation in R/match.R
 \name{match_chars_error}
 \alias{match_chars_error}
-\title{Title}
+\title{Match sensors and units: sensor chars and error drift
+Match the sensor names and units in the sensor characteristics sheet to those
+in the error drift sheet.}
 \usage{
 match_chars_error(sensor_chars, error_drift)
 }
@@ -15,5 +17,7 @@ match_chars_error(sensor_chars, error_drift)
 dataframe
 }
 \description{
-Title
+Match sensors and units: sensor chars and error drift
+Match the sensor names and units in the sensor characteristics sheet to those
+in the error drift sheet.
 }

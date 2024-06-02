@@ -2,7 +2,11 @@
 % Please edit documentation in R/flag.R
 \name{do_flag_1}
 \alias{do_flag_1}
-\title{Title}
+\title{Assign flag 1 (sensor status)
+Assign the flag 1 if values are missing for a short period of time OR there
+are a few values recorded in a large block of missing values OR the number
+of repeating 0s exceeds the number defined as the maximum number of allowable
+repeating 0s in the sensor characteristics sheet.}
 \usage{
 do_flag_1(data_poi, time_small, time_large, repeat_0s_max)
 }
@@ -19,5 +23,9 @@ do_flag_1(data_poi, time_small, time_large, repeat_0s_max)
 dataframe
 }
 \description{
-Title
+Assign flag 1 (sensor status)
+Assign the flag 1 if values are missing for a short period of time OR there
+are a few values recorded in a large block of missing values OR the number
+of repeating 0s exceeds the number defined as the maximum number of allowable
+repeating 0s in the sensor characteristics sheet.
 }

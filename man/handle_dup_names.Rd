@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{handle_dup_names}
 \alias{handle_dup_names}
-\title{Title}
+\title{Handle duplicate names}
 \usage{
 handle_dup_names(data)
 }
@@ -13,5 +13,5 @@ handle_dup_names(data)
 dataframe
 }
 \description{
-Title
+Handle duplicate names
 }

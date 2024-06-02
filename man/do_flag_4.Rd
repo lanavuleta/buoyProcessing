@@ -2,7 +2,11 @@
 % Please edit documentation in R/flag.R
 \name{do_flag_4}
 \alias{do_flag_4}
-\title{Title}
+\title{Assign flag 4 (maximum rate of change)
+Assign the flag 4 if the values are defined as outliers based on the
+timeseries decomposition definition of outliers OR if the rate of change
+between recorded values exceeds the maximum allowable rate of change defined
+in the sensor characteristics sheet.}
 \usage{
 do_flag_4(data_poi, roc_threshold, time_small)
 }
@@ -17,5 +21,9 @@ do_flag_4(data_poi, roc_threshold, time_small)
 dataframe
 }
 \description{
-Title
+Assign flag 4 (maximum rate of change)
+Assign the flag 4 if the values are defined as outliers based on the
+timeseries decomposition definition of outliers OR if the rate of change
+between recorded values exceeds the maximum allowable rate of change defined
+in the sensor characteristics sheet.
 }

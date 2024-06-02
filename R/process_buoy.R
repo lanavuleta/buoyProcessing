@@ -1,4 +1,6 @@
-#' Title
+#' Process buoy
+#' Process the buoy data. This is the starting function for buoy flagging and
+#' error assignment.
 #'
 #' @param info_fpath file path. Path to the buoy info excel file
 #' @param data_fpath file path. Path to the raw buoy data file
@@ -69,7 +71,10 @@ process_buoy <- function(info_fpath = "data/input/example_buoy_input.xlsx",
 
 }
 
-#' Title
+#' Combine the list of dataframes output from process_buoy()
+#' The list of dataframes output makes visualizing the data easier in the user
+#' interface. For better data export, the lists must be combined into one single
+#' dataset.
 #'
 #' @param data list of dataframes. Output from process_buoy()
 #'

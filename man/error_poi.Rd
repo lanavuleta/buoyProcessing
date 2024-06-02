@@ -2,7 +2,9 @@
 % Please edit documentation in R/handle_poi.R
 \name{error_poi}
 \alias{error_poi}
-\title{Title}
+\title{Assign error to the dataset of the parameter of interest
+See the Help tab of the tool's user interface for more info on error
+assignment.}
 \usage{
 error_poi(data_poi, sensor_accuracy, error_info, parameter)
 }
@@ -19,5 +21,7 @@ error_poi(data_poi, sensor_accuracy, error_info, parameter)
 dataframe
 }
 \description{
-Title
+Assign error to the dataset of the parameter of interest
+See the Help tab of the tool's user interface for more info on error
+assignment.
 }

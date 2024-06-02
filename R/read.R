@@ -1,4 +1,7 @@
-#' Title
+#' Check sensor characteristics match with buoy data
+#' Ensure that the parameter and unit combinations provided by the user in the
+#' sensor characteristics sheet match up with the sensors and units listed in
+#' the buoy datasheet.
 #'
 #' @inheritParams process_buoy
 #' @inheritParams combine_chars_with_error
@@ -27,10 +30,9 @@ read_data_params_units <- function(data_fpath, row_param_names, row_units, senso
     slice(-1)
 
   if (nrow(data_params_units) != nrow(sensor_chars)) {
-    stop(paste("Issue with the input buoy data. The tool can only accept data",
-               "that has one single column for the",
-               "date and time and one column for each of the sensors listed in the",
-               "Sensor Characteristics sheet."),
+    stop(paste("Issue with the sensor characteristics sheet. The number of sensor/unit",
+               "combinations in the buoy datasheet do not match with those",
+               "provided in the Sensor Characteristics sheet."),
          call. = FALSE)
   }
 
@@ -38,7 +40,7 @@ read_data_params_units <- function(data_fpath, row_param_names, row_units, senso
 
 }
 
-#' Title
+#' Read buoy data
 #'
 #' @inheritParams process_buoy
 #' @inheritParams check_params_units
@@ -79,7 +81,9 @@ read_data <- function(data_fpath, row_param_names, row_data_start, data_params_u
   return(data)
 }
 
-#' Title
+#' Read sensor maintenance buoy info sheet
+#' Ensure that the sensor maintenance sheet format is acceptable for read-in by
+#' the tool.
 #'
 #' @inheritParams process_buoy
 #'
@@ -119,7 +123,9 @@ read_sensor_maint <- function(info_fpath) {
 
 }
 
-#' Title
+#' Read error drift buoy info sheet
+#' Ensure that the error drift sheet format is acceptable for read-in by
+#' the tool.
 #'
 #' @inheritParams process_buoy
 #' @param sensor_maint dataframe. Output from read_sensor_maint()
@@ -164,7 +170,9 @@ read_error_drift <- function(info_fpath, sensor_maint) {
   return(error_drift)
 }
 
-#' Title
+#' Read sensor characteristics buoy info sheet
+#' Ensure that the sensor characteristics sheet format is acceptable for read-in by
+#' the tool.
 #'
 #' @inheritParams process_buoy
 #' @param error_drift dataframe. Output from read_error_drift()
@@ -213,7 +221,10 @@ read_sensor_chars <- function(info_fpath, error_drift) {
 
 }
 
-#' Title
+#' Read already QCd data into the tool
+#' Note that the QCd data must fulfill many requirements. The data format should
+#' not be changed from what the tool outputted during the intitial QCing. Flags
+#' and error can be changed.
 #'
 #' @param data_qcd_fpath string. Path to QCd data csv
 #'
@@ -248,7 +259,10 @@ read_data_qcd <- function(data_qcd_fpath) {
   return(data_qcd)
 }
 
-#' Title
+#' Split the already QCd data into lists
+#' When the tool reads in the QCd data, it reads it in as a single dataframe. For
+#' plotting, the tool must have individual lists, where each list contains all
+#' the data relevant to a specific sensor.
 #'
 #' @param data_qcd dataframe. Output from read_data_qcd()
 #'
@@ -283,7 +297,7 @@ split_data_qcd <- function(data_qcd) {
   data_qcd_pois <- map2(start_cols, end_cols, split_data, data_qcd)
 }
 
-#' Title
+#' Unsured function
 #'
 #' @param start_col numeric. Column at which poi data begins
 #' @param end_col numeric. Column at which poi data ends

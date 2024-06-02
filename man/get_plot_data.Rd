@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{get_plot_data}
 \alias{get_plot_data}
-\title{Title}
+\title{Retrieve data to plot in user interface}
 \usage{
 get_plot_data(data, index)
 }
@@ -15,5 +15,5 @@ get_plot_data(data, index)
 dataframe. One of the list elements output from process_buoy()
 }
 \description{
-Title
+Retrieve data to plot in user interface
 }

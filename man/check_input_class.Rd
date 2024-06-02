@@ -2,7 +2,8 @@
 % Please edit documentation in R/check.R
 \name{check_input_class}
 \alias{check_input_class}
-\title{Title}
+\title{Check column class
+Checks that column classes are set correctly for proper read-in by the tool.}
 \usage{
 check_input_class(input, input_name, classes_correct, cols_correct)
 }
@@ -19,5 +20,6 @@ check_input_class(input, input_name, classes_correct, cols_correct)
 character list. The columns that were entered incorrectly
 }
 \description{
-Title
+Check column class
+Checks that column classes are set correctly for proper read-in by the tool.
 }

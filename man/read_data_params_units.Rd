@@ -2,7 +2,10 @@
 % Please edit documentation in R/read.R
 \name{read_data_params_units}
 \alias{read_data_params_units}
-\title{Title}
+\title{Check sensor characteristics match with buoy data
+Ensure that the parameter and unit combinations provided by the user in the
+sensor characteristics sheet match up with the sensors and units listed in
+the buoy datasheet.}
 \usage{
 read_data_params_units(data_fpath, row_param_names, row_units, sensor_chars)
 }
@@ -19,5 +22,8 @@ read_data_params_units(data_fpath, row_param_names, row_units, sensor_chars)
 dataframe
 }
 \description{
-Title
+Check sensor characteristics match with buoy data
+Ensure that the parameter and unit combinations provided by the user in the
+sensor characteristics sheet match up with the sensors and units listed in
+the buoy datasheet.
 }

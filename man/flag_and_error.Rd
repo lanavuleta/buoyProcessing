@@ -2,7 +2,7 @@
 % Please edit documentation in R/handle_poi.R
 \name{flag_and_error}
 \alias{flag_and_error}
-\title{Title}
+\title{Starting function to assign flags and error}
 \usage{
 flag_and_error(data, sensor_chars, sensor_maint, combine_flags, missing_vals)
 }
@@ -23,5 +23,5 @@ data column getting 6 associated flag columns (From flag_x to flag_4)}
 dataframe
 }
 \description{
-Title
+Starting function to assign flags and error
 }

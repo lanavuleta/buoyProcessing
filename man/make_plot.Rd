@@ -2,7 +2,9 @@
 % Please edit documentation in R/plot.R
 \name{make_plot}
 \alias{make_plot}
-\title{Title}
+\title{Create the plot to display in user interface
+Select the colour and shape of data points depending on assigned grade, select
+the background colour of the plot depending on the assigned error.}
 \usage{
 make_plot(data_poi)
 }
@@ -13,5 +15,7 @@ make_plot(data_poi)
 ggplot
 }
 \description{
-Title
+Create the plot to display in user interface
+Select the colour and shape of data points depending on assigned grade, select
+the background colour of the plot depending on the assigned error.
 }

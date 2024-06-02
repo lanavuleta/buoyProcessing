@@ -2,7 +2,9 @@
 % Please edit documentation in R/check.R
 \name{check_params_units}
 \alias{check_params_units}
-\title{Title}
+\title{Check sensor characteristics match with buoy data
+Check that the actual sensor names and unit names provided in the sensor
+characteristics sheet match up with those in the buoy datasheet.}
 \usage{
 check_params_units(data_params_units, sensor_chars)
 }
@@ -12,5 +14,7 @@ check_params_units(data_params_units, sensor_chars)
 \item{sensor_chars}{dataframe. Output from read_sensor_chars()}
 }
 \description{
-Title
+Check sensor characteristics match with buoy data
+Check that the actual sensor names and unit names provided in the sensor
+characteristics sheet match up with those in the buoy datasheet.
 }

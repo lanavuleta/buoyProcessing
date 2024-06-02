@@ -2,7 +2,8 @@
 % Please edit documentation in R/check.R
 \name{check_buoy_info}
 \alias{check_buoy_info}
-\title{Title}
+\title{Check buoy info sheet
+Checks that the info sheet's format has been maintained by the user.}
 \usage{
 check_buoy_info(info_fpath)
 }
@@ -10,5 +11,6 @@ check_buoy_info(info_fpath)
 \item{info_fpath}{file path. Path to the buoy info excel file}
 }
 \description{
-Title
+Check buoy info sheet
+Checks that the info sheet's format has been maintained by the user.
 }

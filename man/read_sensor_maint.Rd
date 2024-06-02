@@ -2,7 +2,9 @@
 % Please edit documentation in R/read.R
 \name{read_sensor_maint}
 \alias{read_sensor_maint}
-\title{Title}
+\title{Read sensor maintenance buoy info sheet
+Ensure that the sensor maintenance sheet format is acceptable for read-in by
+the tool.}
 \usage{
 read_sensor_maint(info_fpath)
 }
@@ -13,5 +15,7 @@ read_sensor_maint(info_fpath)
 dataframe
 }
 \description{
-Title
+Read sensor maintenance buoy info sheet
+Ensure that the sensor maintenance sheet format is acceptable for read-in by
+the tool.
 }

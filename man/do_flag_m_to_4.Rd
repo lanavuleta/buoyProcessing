@@ -2,7 +2,10 @@
 % Please edit documentation in R/flag.R
 \name{do_flag_m_to_4}
 \alias{do_flag_m_to_4}
-\title{Calculate flag for parameter of interest (not including X flags)}
+\title{Calculate flag for parameter of interest (not including X flags)
+Calculate flag for parameter of interest (not including X flags) based on flag
+hierarchy (1, M, 2, 3, 4) (Note that X flags have highest priority but are
+assigned later).}
 \usage{
 do_flag_m_to_4(data_poi, combine_flags)
 }
@@ -18,4 +21,7 @@ dataframe
 }
 \description{
 Calculate flag for parameter of interest (not including X flags)
+Calculate flag for parameter of interest (not including X flags) based on flag
+hierarchy (1, M, 2, 3, 4) (Note that X flags have highest priority but are
+assigned later).
 }

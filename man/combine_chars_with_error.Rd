@@ -2,7 +2,9 @@
 % Please edit documentation in R/edit_inputs.R
 \name{combine_chars_with_error}
 \alias{combine_chars_with_error}
-\title{Title}
+\title{Add error drift into to sensor characteristics dataframe
+Enrich the sensor characteristics dataframe with the information from the error
+drift sheet.}
 \usage{
 combine_chars_with_error(sensor_chars, error_drift)
 }
@@ -15,5 +17,7 @@ combine_chars_with_error(sensor_chars, error_drift)
 dataframe
 }
 \description{
-Title
+Add error drift into to sensor characteristics dataframe
+Enrich the sensor characteristics dataframe with the information from the error
+drift sheet.
 }

@@ -1,4 +1,6 @@
-#' Title
+#' Determine small vs large time periods
+#' Depending on the time interval in the buoy datasheet, determine what defines a
+#' small vs a large period of time (for use in flag assignment).
 #'
 #' @inheritParams flag_and_error
 #'
@@ -23,7 +25,8 @@ get_flag_intervals <- function(data) {
 
 }
 
-#' Title
+#' Handle duplicate names
+#'
 #'
 #' @param data dataframe. Output from flag_and_error
 #'
@@ -40,7 +43,11 @@ handle_dup_names <- function(data) {
 }
 
 
-#' Title
+#' Format the accuracy column of the sensor characteristics sheet
+#' Make sure that the user-provided accuracy for all sensors listed in the error
+#' drift sheet fulfill that format requirements so that the tool can properly
+#' understand the user-provided accuracy. Send error messages if user has not
+#' provided satisfactory accuracies.
 #'
 #' @param sca dataframe. sensor_chars as edited in edit_sensor_chars()
 #'

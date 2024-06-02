@@ -2,7 +2,10 @@
 % Please edit documentation in R/process_buoy.R
 \name{combine_buoy}
 \alias{combine_buoy}
-\title{Title}
+\title{Combine the list of dataframes output from process_buoy()
+The list of dataframes output makes visualizing the data easier in the user
+interface. For better data export, the lists must be combined into one single
+dataset.}
 \usage{
 combine_buoy(data)
 }
@@ -13,5 +16,8 @@ combine_buoy(data)
 dataframe. All buoy data in one single dataframe
 }
 \description{
-Title
+Combine the list of dataframes output from process_buoy()
+The list of dataframes output makes visualizing the data easier in the user
+interface. For better data export, the lists must be combined into one single
+dataset.
 }

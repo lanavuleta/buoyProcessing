@@ -2,7 +2,8 @@
 % Please edit documentation in R/check.R
 \name{check_error_maint_match}
 \alias{check_error_maint_match}
-\title{Title}
+\title{Check dates: error drift and sensor maintenance
+Check that dates match between the error drift and sensor maintenance sheets.}
 \usage{
 check_error_maint_match(error_drift)
 }
@@ -13,5 +14,6 @@ check_error_maint_match(error_drift)
 print statement if error
 }
 \description{
-Title
+Check dates: error drift and sensor maintenance
+Check that dates match between the error drift and sensor maintenance sheets.
 }

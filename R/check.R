@@ -1,4 +1,5 @@
-#' Title
+#' Check buoy info sheet
+#' Checks that the info sheet's format has been maintained by the user.
 #'
 #' @inheritParams process_buoy
 #'
@@ -28,7 +29,9 @@ check_buoy_info <- function(info_fpath) {
   }
 }
 
-#' Title
+#' Check sensor characteristics match with buoy data
+#' Check that the actual sensor names and unit names provided in the sensor
+#' characteristics sheet match up with those in the buoy datasheet.
 #'
 #' @param data_params_units dataframe. Output from read_data_params_units()
 #' @inheritParams edit_sensor_chars
@@ -50,7 +53,9 @@ check_params_units <- function(data_params_units, sensor_chars) {
   }
 }
 
-#' Title
+#' Check error drift sheet.
+#' Ensure that pre and post values match up and that there's only 1 row for each
+#' sensor checked for each date.
 #'
 #' @inheritParams edit_error_drift
 #'
@@ -86,7 +91,7 @@ check_error_drift <- function(error_drift) {
 
 }
 
-#' Title
+#' Unused function.
 #'
 #' @param accuracy string. Accuracy from sensor_chars row
 #' @param unit string. Characters remaining after the "+/- x.xx" is extracted
@@ -111,7 +116,9 @@ get_accuracy_units <- function(accuracy, unit) {
   return(accuracy_issues)
 }
 
-#' Title
+#' Check error drift and sensor characteristics match
+#' Check that the listed sensors and units match between the sensor characteristics
+#' and error drift sheets.
 #'
 #' @inheritParams edit_sensor_chars
 #' @inheritParams edit_error_drift
@@ -157,7 +164,8 @@ check_chars_error_match <- function(sensor_chars, error_drift) {
   }
 }
 
-#' Title
+#' Check dates: error drift and sensor maintenance
+#' Check that dates match between the error drift and sensor maintenance sheets.
 #'
 #' @param error_drift dataframe. Output from match_error_maint()
 #'
@@ -184,7 +192,8 @@ check_error_maint_match <- function(error_drift) {
 
 }
 
-#' Title
+#' Check column class
+#' Checks that column classes are set correctly for proper read-in by the tool.
 #'
 #' @param input dataframe. The input whose column classes are to be checked
 #' @param input_name string. The name of the input being checked
@@ -240,7 +249,8 @@ check_input_class <- function(input, input_name, classes_correct, cols_correct) 
 
 # Checking column input validity -----------------------------------------------
 
-#' Title
+#' Check flags
+#' Ensure users are only supplying flags X1, X2, X3 to the tool.
 #'
 #' @param flags character string. The flags set by the user in the sensor_maint sheet
 #'

@@ -2,7 +2,9 @@
 % Please edit documentation in R/flag.R
 \name{missing_chunks_flag_1}
 \alias{missing_chunks_flag_1}
-\title{Title}
+\title{Assign flag 1 based on missing values
+Assign flag 1 if recorded vals are missing for a short period of time OR if
+there are few vals in large block of missing vals.}
 \usage{
 missing_chunks_flag_1(missing_chunks, time_small, time_large)
 }
@@ -17,5 +19,7 @@ missing_chunks_flag_1(missing_chunks, time_small, time_large)
 dataframe
 }
 \description{
-Title
+Assign flag 1 based on missing values
+Assign flag 1 if recorded vals are missing for a short period of time OR if
+there are few vals in large block of missing vals.
 }

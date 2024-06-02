@@ -2,7 +2,9 @@
 % Please edit documentation in R/check.R
 \name{check_chars_error_match}
 \alias{check_chars_error_match}
-\title{Title}
+\title{Check error drift and sensor characteristics match
+Check that the listed sensors and units match between the sensor characteristics
+and error drift sheets.}
 \usage{
 check_chars_error_match(sensor_chars, error_drift)
 }
@@ -12,5 +14,7 @@ check_chars_error_match(sensor_chars, error_drift)
 \item{error_drift}{dataframe. Output from read_error_drift()}
 }
 \description{
-Title
+Check error drift and sensor characteristics match
+Check that the listed sensors and units match between the sensor characteristics
+and error drift sheets.
 }

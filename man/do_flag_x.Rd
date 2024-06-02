@@ -2,7 +2,11 @@
 % Please edit documentation in R/flag.R
 \name{do_flag_x}
 \alias{do_flag_x}
-\title{Title}
+\title{Assign X flags
+Assign the X flags as they are defined in the sensor maintenance sheet based
+on the datetime of the flag assignment. Also assign that flag 10 minutes
+ahead of and 30 minutes after the given time period to account for buoy
+settling.}
 \usage{
 do_flag_x(data, sensor_maint)
 }
@@ -15,5 +19,9 @@ do_flag_x(data, sensor_maint)
 dataframe
 }
 \description{
-Title
+Assign X flags
+Assign the X flags as they are defined in the sensor maintenance sheet based
+on the datetime of the flag assignment. Also assign that flag 10 minutes
+ahead of and 30 minutes after the given time period to account for buoy
+settling.
 }

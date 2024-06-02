@@ -1,4 +1,7 @@
-#' Title
+#' Edit sensor maintenance sheet
+#' Format the sensor maintenance dates to be in propse datetime format and edit
+#' the datetimes to start 10 minutes earlier and end 30 minutes later to account
+#' for the time period during which the boat is settling.
 #'
 #' @param sensor_maint dataframe. Output from read_sensor_maint()
 #'
@@ -37,7 +40,8 @@ edit_sensor_maint <- function(sensor_maint) {
 
 }
 
-#' Title
+#' Edit error drift sheet
+#' Calculate and store specific values required to later calculate error.
 #'
 #' @param error_drift dataframe. Output from read_error_drift()
 #' @inheritParams read_error_drift
@@ -78,7 +82,8 @@ edit_error_drift <- function(error_drift, sensor_maint) {
 
 }
 
-#' Title
+#' Edit sensor characteristics sheet
+#' Format the accuracy column for better read-in by the tool.
 #'
 #' @param sensor_chars dataframe. Output from read_sensor_chars()
 #' @inheritParams read_sensor_chars
@@ -133,7 +138,9 @@ edit_sensor_chars <- function(sensor_chars, error_drift) {
 
 }
 
-#' Title
+#' Add error drift into to sensor characteristics dataframe
+#' Enrich the sensor characteristics dataframe with the information from the error
+#' drift sheet.
 #'
 #' @inheritParams edit_sensor_chars
 #' @inheritParams edit_error_drift

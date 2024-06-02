@@ -2,7 +2,7 @@
 % Please edit documentation in R/check.R
 \name{get_accuracy_units}
 \alias{get_accuracy_units}
-\title{Title}
+\title{Unused function.}
 \usage{
 get_accuracy_units(accuracy, unit)
 }
@@ -15,5 +15,5 @@ get_accuracy_units(accuracy, unit)
 boolean. TRUE if accuracy input is incorrect, FALSE otherwise
 }
 \description{
-Title
+Unused function.
 }

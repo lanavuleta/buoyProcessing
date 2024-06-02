@@ -1,4 +1,6 @@
-#' Title
+#' Match sensors and units: sensor chars and error drift
+#' Match the sensor names and units in the sensor characteristics sheet to those
+#' in the error drift sheet.
 #'
 #' @inheritParams check_chars_error_match
 #'
@@ -22,7 +24,9 @@ match_chars_error <- function(sensor_chars, error_drift) {
 
 }
 
-#' Title
+#' Match dates: error drift and sensor maintenance
+#' Match the dates found in the error drift sheet to those in the sensor
+#' maintenance sheet.
 #'
 #' @inheritParams edit_error_drift
 #'

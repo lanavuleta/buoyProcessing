@@ -2,7 +2,7 @@
 % Please edit documentation in R/handle_poi.R
 \name{handle_poi}
 \alias{handle_poi}
-\title{Title}
+\title{Assign flags and error to the dataset of the parameter of interest}
 \usage{
 handle_poi(input, time_small, time_large, combine_flags, missing_vals)
 }
@@ -23,5 +23,5 @@ data column getting 6 associated flag columns (From flag_x to flag_4)}
 dataframe
 }
 \description{
-Title
+Assign flags and error to the dataset of the parameter of interest
 }

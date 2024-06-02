@@ -1,4 +1,4 @@
-#' Title
+#' Retrieve data to plot in user interface
 #'
 #' @param data dataframe. Output from combine_buoy()
 #' @param index numeric. List index of parameter we wish to plot
@@ -9,7 +9,8 @@ get_plot_data <- function(data, index) {
   data[[index]]
 }
 
-#' Title
+#' Edit plot data only so far as it's easier to plot for R
+#' Minor edits - data types, turning columns into factors.
 #'
 #' @param data_poi dataframe. Output from get_plot_data()
 #'
@@ -42,7 +43,9 @@ edit_plot_data <- function(data_poi) {
     rename(values = 2, flag = 3)
 }
 
-#' Title
+#' Create the plot to display in user interface
+#' Select the colour and shape of data points depending on assigned grade, select
+#' the background colour of the plot depending on the assigned error.
 #'
 #' @param data_poi dataframe. Output from get_plot_data()
 #'

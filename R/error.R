@@ -1,4 +1,7 @@
-#' Title
+#' Calculate data grade
+#' Calculate data grade based on how the sensor error determined during sensor
+#' calibration and described in the error drift buoy info sheet compares to the
+#'  sensor accuracy as defined in the sensor characteristics sheet.
 #'
 #' @inheritParams error_poi
 #'

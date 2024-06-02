@@ -2,7 +2,9 @@
 % Please edit documentation in R/utilities.R
 \name{get_flag_intervals}
 \alias{get_flag_intervals}
-\title{Title}
+\title{Determine small vs large time periods
+Depending on the time interval in the buoy datasheet, determine what defines a
+small vs a large period of time (for use in flag assignment).}
 \usage{
 get_flag_intervals(data)
 }
@@ -13,5 +15,7 @@ get_flag_intervals(data)
 numeric vector
 }
 \description{
-Title
+Determine small vs large time periods
+Depending on the time interval in the buoy datasheet, determine what defines a
+small vs a large period of time (for use in flag assignment).
 }

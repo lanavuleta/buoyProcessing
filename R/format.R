@@ -1,4 +1,5 @@
-#' Title
+#' Format buoy data datetime
+#' Properly format the datetime column of the buoy data.
 #'
 #' @param data dataframe. Output from read_data()
 #' @inheritParams process_buoy
@@ -30,7 +31,8 @@ format_datetime <- function(data, datetime_format) {
 
 }
 
-#' Title
+#' Format user-input datetime string
+#' Formats the user-input datetime string to one that R can read
 #'
 #' @inheritParams process_buoy
 #'

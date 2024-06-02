@@ -2,7 +2,9 @@
 % Please edit documentation in R/match.R
 \name{match_error_maint}
 \alias{match_error_maint}
-\title{Title}
+\title{Match dates: error drift and sensor maintenance
+Match the dates found in the error drift sheet to those in the sensor
+maintenance sheet.}
 \usage{
 match_error_maint(error_drift, sensor_maint)
 }
@@ -15,5 +17,7 @@ match_error_maint(error_drift, sensor_maint)
 dataframe
 }
 \description{
-Title
+Match dates: error drift and sensor maintenance
+Match the dates found in the error drift sheet to those in the sensor
+maintenance sheet.
 }

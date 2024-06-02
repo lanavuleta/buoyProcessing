@@ -2,7 +2,9 @@
 % Please edit documentation in R/check.R
 \name{check_error_drift}
 \alias{check_error_drift}
-\title{Title}
+\title{Check error drift sheet.
+Ensure that pre and post values match up and that there's only 1 row for each
+sensor checked for each date.}
 \usage{
 check_error_drift(error_drift)
 }
@@ -10,5 +12,7 @@ check_error_drift(error_drift)
 \item{error_drift}{dataframe. Output from read_error_drift()}
 }
 \description{
-Title
+Check error drift sheet.
+Ensure that pre and post values match up and that there's only 1 row for each
+sensor checked for each date.
 }

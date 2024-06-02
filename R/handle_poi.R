@@ -1,4 +1,4 @@
-#' Title
+#' Starting function to assign flags and error
 #'
 #' @inheritParams format_datetime
 #' @inheritParams check_params_units
@@ -44,7 +44,7 @@ flag_and_error <- function(data, sensor_chars, sensor_maint, combine_flags,
 
 }
 
-#' Title
+#' Finalize flags for parameter of interest
 #'
 #' @param data_poi dataframe. Output from handle_poi()
 #' @param data_flagx dataframe. The complete datetime and flag_x columns
@@ -60,7 +60,9 @@ finalize_poi <- function(data_poi, data_flagx) {
     select(-flag_x)
 }
 
-#' Title
+#' Prepare data for processing
+#' Combine for the particular parameter of interest: the data and the sensor
+#' characteristics.
 #'
 #' @param data_poi dataframe. Datetime column and parameter of interest column
 #' @param sensor_chars_poi list. Sensor chars of interest associated with the
@@ -80,7 +82,8 @@ prep_input <- function(data_poi, sensor_chars_poi) {
   return(input)
 }
 
-#' Title
+#' Assign flags and error to the dataset of the parameter of interest
+#'
 #' @param input list. data_poi and all the sensor_chars of interest
 #' @param time_small numeric. Number of rows that indicate a small time step
 #' @param time_large numeric. Number of rows that indicate a large time step
@@ -110,7 +113,8 @@ handle_poi <- function(input,
 
 }
 
-#' Title
+#' Assign flags to the dataset of the parameter of interest
+#' See the Help tab of the tool's user interface for more info on flag assignment.
 #'
 #' @inheritParams handle_poi
 #' @inheritParams prep_input
@@ -156,7 +160,9 @@ flag_poi <- function(data_poi,
 
 }
 
-#' Title
+#' Assign error to the dataset of the parameter of interest
+#' See the Help tab of the tool's user interface for more info on error
+#' assignment.
 #'
 #' @inheritParams flag_poi
 #' @param sensor_accuracy numeric. Instrument accuracy as output by format_accuracy()

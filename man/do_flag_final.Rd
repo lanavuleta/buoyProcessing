@@ -2,7 +2,9 @@
 % Please edit documentation in R/flag.R
 \name{do_flag_final}
 \alias{do_flag_final}
-\title{Title}
+\title{Assign X flags
+If an X flag is assigned, that flag takes precedence over all other flags and
+replaces them.}
 \usage{
 do_flag_final(data)
 }
@@ -14,5 +16,7 @@ their flags}
 dataframe
 }
 \description{
-Title
+Assign X flags
+If an X flag is assigned, that flag takes precedence over all other flags and
+replaces them.
 }

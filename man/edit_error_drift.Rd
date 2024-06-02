@@ -2,7 +2,8 @@
 % Please edit documentation in R/edit_inputs.R
 \name{edit_error_drift}
 \alias{edit_error_drift}
-\title{Title}
+\title{Edit error drift sheet
+Calculate and store specific values required to later calculate error.}
 \usage{
 edit_error_drift(error_drift, sensor_maint)
 }
@@ -15,5 +16,6 @@ edit_error_drift(error_drift, sensor_maint)
 dataframe
 }
 \description{
-Title
+Edit error drift sheet
+Calculate and store specific values required to later calculate error.
 }

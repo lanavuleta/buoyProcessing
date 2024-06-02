@@ -1,4 +1,8 @@
-#' Title
+#' Assign X flags
+#' Assign the X flags as they are defined in the sensor maintenance sheet based
+#' on the datetime of the flag assignment. Also assign that flag 10 minutes
+#' ahead of and 30 minutes after the given time period to account for buoy
+#' settling.
 #'
 #' @inheritParams flag_and_error
 #'
@@ -19,7 +23,11 @@ do_flag_x <- function(data, sensor_maint) {
 
 }
 
-#' Title
+#' Assign flag 1 (sensor status)
+#' Assign the flag 1 if values are missing for a short period of time OR there
+#' are a few values recorded in a large block of missing values OR the number
+#' of repeating 0s exceeds the number defined as the maximum number of allowable
+#' repeating 0s in the sensor characteristics sheet.
 #'
 #' @inheritParams flag_poi
 #'
@@ -80,7 +88,9 @@ do_flag_1 <- function(data_poi, time_small, time_large, repeat_0s_max) {
 
 }
 
-#' Title
+#' Assign flag 2 (sensor range)
+#' Assign the flag 2 if the recorded values exceed the sensor range defined in
+#' the sensor characteristics sheet.
 #'
 #' @inheritParams flag_poi
 #'
@@ -99,7 +109,9 @@ do_flag_2 <- function(data_poi, operating_range_min, operating_range_max) {
 
 }
 
-#' Title
+#' Assign flag 3 (locally realistic range)
+#' Assign the flag 3 if the recorded values exceed the locally realistic range
+#' defined in the sensor characteristics sheet.
 #'
 #' @inheritParams flag_poi
 #'
@@ -118,7 +130,11 @@ do_flag_3 <- function(data_poi, local_range_min, local_range_max) {
 
 }
 
-#' Title
+#' Assign flag 4 (maximum rate of change)
+#' Assign the flag 4 if the values are defined as outliers based on the
+#' timeseries decomposition definition of outliers OR if the rate of change
+#' between recorded values exceeds the maximum allowable rate of change defined
+#' in the sensor characteristics sheet.
 #'
 #' @inheritParams flag_poi
 #'
@@ -151,6 +167,9 @@ do_flag_4 <- function(data_poi, roc_threshold, time_small) {
 }
 
 #' Calculate flag for parameter of interest (not including X flags)
+#' Calculate flag for parameter of interest (not including X flags) based on flag
+#' hierarchy (1, M, 2, 3, 4) (Note that X flags have highest priority but are
+#' assigned later).
 #'
 #' @inheritParams flag_poi
 #'
@@ -184,7 +203,9 @@ do_flag_m_to_4 <- function(data_poi, combine_flags) {
 
 }
 
-#' Title
+#' Assign X flags
+#' If an X flag is assigned, that flag takes precedence over all other flags and
+#' replaces them.
 #'
 #' @param data dataframe. datetime, flag_x, and all other parameter cols and
 #'  their flags
@@ -203,7 +224,9 @@ do_flag_final <- function(data) {
 }
 
 
-#' Title
+#' Assign flag 1 based on missing values
+#' Assign flag 1 if recorded vals are missing for a short period of time OR if
+#' there are few vals in large block of missing vals.
 #'
 #' @param missing_chunks dataframe. Edited run length encoding created in do_flag_1()
 #' @inheritParams do_flag_1

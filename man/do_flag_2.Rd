@@ -2,7 +2,9 @@
 % Please edit documentation in R/flag.R
 \name{do_flag_2}
 \alias{do_flag_2}
-\title{Title}
+\title{Assign flag 2 (sensor range)
+Assign the flag 2 if the recorded values exceed the sensor range defined in
+the sensor characteristics sheet.}
 \usage{
 do_flag_2(data_poi, operating_range_min, operating_range_max)
 }
@@ -17,5 +19,7 @@ do_flag_2(data_poi, operating_range_min, operating_range_max)
 dataframe
 }
 \description{
-Title
+Assign flag 2 (sensor range)
+Assign the flag 2 if the recorded values exceed the sensor range defined in
+the sensor characteristics sheet.
 }

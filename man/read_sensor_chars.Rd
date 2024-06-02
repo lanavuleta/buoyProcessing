@@ -2,7 +2,9 @@
 % Please edit documentation in R/read.R
 \name{read_sensor_chars}
 \alias{read_sensor_chars}
-\title{Title}
+\title{Read sensor characteristics buoy info sheet
+Ensure that the sensor characteristics sheet format is acceptable for read-in by
+the tool.}
 \usage{
 read_sensor_chars(info_fpath, error_drift)
 }
@@ -15,5 +17,7 @@ read_sensor_chars(info_fpath, error_drift)
 dataframe
 }
 \description{
-Title
+Read sensor characteristics buoy info sheet
+Ensure that the sensor characteristics sheet format is acceptable for read-in by
+the tool.
 }

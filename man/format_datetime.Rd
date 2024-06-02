@@ -2,7 +2,8 @@
 % Please edit documentation in R/format.R
 \name{format_datetime}
 \alias{format_datetime}
-\title{Title}
+\title{Format buoy data datetime
+Properly format the datetime column of the buoy data.}
 \usage{
 format_datetime(data, datetime_format)
 }
@@ -15,5 +16,6 @@ format_datetime(data, datetime_format)
 dataframe
 }
 \description{
-Title
+Format buoy data datetime
+Properly format the datetime column of the buoy data.
 }

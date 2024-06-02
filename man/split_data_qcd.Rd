@@ -2,7 +2,10 @@
 % Please edit documentation in R/read.R
 \name{split_data_qcd}
 \alias{split_data_qcd}
-\title{Title}
+\title{Split the already QCd data into lists
+When the tool reads in the QCd data, it reads it in as a single dataframe. For
+plotting, the tool must have individual lists, where each list contains all
+the data relevant to a specific sensor.}
 \usage{
 split_data_qcd(data_qcd)
 }
@@ -13,5 +16,8 @@ split_data_qcd(data_qcd)
 list of dataframes, as was output by process_buoy()
 }
 \description{
-Title
+Split the already QCd data into lists
+When the tool reads in the QCd data, it reads it in as a single dataframe. For
+plotting, the tool must have individual lists, where each list contains all
+the data relevant to a specific sensor.
 }

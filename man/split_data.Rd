@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.R
 \name{split_data}
 \alias{split_data}
-\title{Title}
+\title{Unsured function}
 \usage{
 split_data(start_col, end_col, data_qcd)
 }
@@ -17,5 +17,5 @@ split_data(start_col, end_col, data_qcd)
 dataframe. The columns of interest for a specified parameter
 }
 \description{
-Title
+Unsured function
 }

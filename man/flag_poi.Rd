@@ -2,7 +2,8 @@
 % Please edit documentation in R/handle_poi.R
 \name{flag_poi}
 \alias{flag_poi}
-\title{Title}
+\title{Assign flags to the dataset of the parameter of interest
+See the Help tab of the tool's user interface for more info on flag assignment.}
 \usage{
 flag_poi(
   data_poi,
@@ -50,5 +51,6 @@ data column getting 6 associated flag columns (From flag_x to flag_4)}
 dataframe
 }
 \description{
-Title
+Assign flags to the dataset of the parameter of interest
+See the Help tab of the tool's user interface for more info on flag assignment.
 }

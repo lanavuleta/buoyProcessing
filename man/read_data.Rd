@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.R
 \name{read_data}
 \alias{read_data}
-\title{Title}
+\title{Read buoy data}
 \usage{
 read_data(
   data_fpath,
@@ -27,5 +27,5 @@ read_data(
 dataframe
 }
 \description{
-Title
+Read buoy data
 }

@@ -2,7 +2,8 @@
 % Please edit documentation in R/format.R
 \name{format_datetime_string}
 \alias{format_datetime_string}
-\title{Title}
+\title{Format user-input datetime string
+Formats the user-input datetime string to one that R can read}
 \usage{
 format_datetime_string(datetime_format)
 }
@@ -13,5 +14,6 @@ format_datetime_string(datetime_format)
 string. The datetime format in R-readable format
 }
 \description{
-Title
+Format user-input datetime string
+Formats the user-input datetime string to one that R can read
 }

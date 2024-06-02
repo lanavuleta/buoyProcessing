@@ -2,7 +2,8 @@
 % Please edit documentation in R/edit_inputs.R
 \name{edit_sensor_chars}
 \alias{edit_sensor_chars}
-\title{Title}
+\title{Edit sensor characteristics sheet
+Format the accuracy column for better read-in by the tool.}
 \usage{
 edit_sensor_chars(sensor_chars, error_drift)
 }
@@ -15,5 +16,6 @@ edit_sensor_chars(sensor_chars, error_drift)
 dataframe
 }
 \description{
-Title
+Edit sensor characteristics sheet
+Format the accuracy column for better read-in by the tool.
 }

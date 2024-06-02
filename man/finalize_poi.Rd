@@ -2,7 +2,7 @@
 % Please edit documentation in R/handle_poi.R
 \name{finalize_poi}
 \alias{finalize_poi}
-\title{Title}
+\title{Finalize flags for parameter of interest}
 \usage{
 finalize_poi(data_poi, data_flagx)
 }
@@ -15,5 +15,5 @@ finalize_poi(data_poi, data_flagx)
 dataframe
 }
 \description{
-Title
+Finalize flags for parameter of interest
 }

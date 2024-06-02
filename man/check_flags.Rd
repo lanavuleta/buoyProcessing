@@ -2,7 +2,8 @@
 % Please edit documentation in R/check.R
 \name{check_flags}
 \alias{check_flags}
-\title{Title}
+\title{Check flags
+Ensure users are only supplying flags X1, X2, X3 to the tool.}
 \usage{
 check_flags(flags)
 }
@@ -13,5 +14,6 @@ check_flags(flags)
 error message if flags were not properly assigned
 }
 \description{
-Title
+Check flags
+Ensure users are only supplying flags X1, X2, X3 to the tool.
 }

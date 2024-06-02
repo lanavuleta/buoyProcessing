@@ -2,7 +2,9 @@
 % Please edit documentation in R/process_buoy.R
 \name{process_buoy}
 \alias{process_buoy}
-\title{Title}
+\title{Process buoy
+Process the buoy data. This is the starting function for buoy flagging and
+error assignment.}
 \usage{
 process_buoy(
   info_fpath = "data/input/example_buoy_input.xlsx",
@@ -38,5 +40,7 @@ data column getting 6 associated flag columns (From flag_x to flag_4)}
 list of dataframes output by flag_and_error()
 }
 \description{
-Title
+Process buoy
+Process the buoy data. This is the starting function for buoy flagging and
+error assignment.
 }
